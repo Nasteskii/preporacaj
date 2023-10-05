@@ -8,8 +8,11 @@ import com.preporacaj.preporacaj_backend.repository.ProfileRepository;
 import com.preporacaj.preporacaj_backend.repository.RecommendationRepository;
 import com.preporacaj.preporacaj_backend.service.CommentService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.net.ContentHandler;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -21,8 +24,14 @@ public class CommentServiceImpl implements CommentService {
     private final RecommendationRepository recommendationRepository;
 
     @Override
-    public List<Comment> getAll() {
-        return commentRepository.findAll();
+    public Page<Comment> getAll(Pageable pageable) {
+        return commentRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Comment> getByRecommendationId(String recommendationId, Pageable pageable) {
+        Recommendation recommendation = recommendationRepository.findById(recommendationId).orElseThrow(NoSuchElementException::new);
+        return commentRepository.findAllByRecommendation(recommendation, pageable);
     }
 
     @Override

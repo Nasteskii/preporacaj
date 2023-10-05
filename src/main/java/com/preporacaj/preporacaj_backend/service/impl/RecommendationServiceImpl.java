@@ -8,9 +8,10 @@ import com.preporacaj.preporacaj_backend.repository.ProfileRepository;
 import com.preporacaj.preporacaj_backend.repository.RecommendationRepository;
 import com.preporacaj.preporacaj_backend.service.RecommendationService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -20,17 +21,29 @@ public class RecommendationServiceImpl implements RecommendationService {
     private final ProfileRepository profileRepository;
 
     @Override
-    public List<Recommendation> getAll() {
-        return recommendationRepository.findAll();
+    public Page<Recommendation> getAll(Pageable pageable) {
+        return recommendationRepository.findAll(pageable);
     }
 
     @Override
-    public Recommendation addRecommendation(String title, String recommendationContent, RecommendationCategory category, String profileId) {
+    public Page<Recommendation> getByCategory(RecommendationCategory recommendationCategory, Pageable pageable) {
+        return recommendationRepository.findAllByRecommendationCategory(recommendationCategory, pageable);
+    }
+
+    @Override
+    public Page<Recommendation> getByProfileId(String profileId, Pageable pageable) {
+        Profile profile = profileRepository.findById(profileId).orElseThrow(NoSuchElementException::new);
+        return recommendationRepository.findAllByProfile(profile, pageable);
+    }
+
+    @Override
+    public Recommendation addRecommendation(String title, String recommendationContent, RecommendationCategory recommendationCategory, String profileId) {
         Profile profile = profileRepository.findById(profileId).orElseThrow(NoSuchElementException::new);
         Recommendation newRecommendation = new Recommendation();
         newRecommendation.setTitle(title);
         newRecommendation.setRecommendationContent(recommendationContent);
-        newRecommendation.setRecommendationCategory(category);
+        newRecommendation.setRecommendationCategory(recommendationCategory);
+        newRecommendation.setStatus(Status.ACTIVE);
         newRecommendation.setRating("Not rated");
         newRecommendation.setRatings(0);
         newRecommendation.setProfile(profile);
@@ -38,12 +51,13 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     @Override
-    public Recommendation editRecommendation(String recommendationId, String title, String recommendationContent, RecommendationCategory category, String profileId) {
+    public Recommendation editRecommendation(String recommendationId, String title, String recommendationContent, RecommendationCategory recommendationCategory, Status status, String profileId) {
         Recommendation oldRecommendation = recommendationRepository.findById(recommendationId).orElseThrow(NoSuchElementException::new);
         Profile profile = profileRepository.findById(profileId).orElseThrow(NoSuchElementException::new);
         oldRecommendation.setTitle(title);
         oldRecommendation.setRecommendationContent(recommendationContent);
-        oldRecommendation.setRecommendationCategory(category);
+        oldRecommendation.setRecommendationCategory(recommendationCategory);
+        oldRecommendation.setStatus(status);
         oldRecommendation.setProfile(profile);
         return recommendationRepository.save(oldRecommendation);
     }

@@ -9,7 +9,7 @@ import lombok.*;
 @Entity
 public class Recommendation {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     private String title;
     private String recommendationContent;
