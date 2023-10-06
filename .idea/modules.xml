@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/preporacaj_backend/preporacaj_backend.iml" filepath="$PROJECT_DIR$/preporacaj_backend/preporacaj_backend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/preporacaj.iml" filepath="$PROJECT_DIR$/.idea/preporacaj.iml" />
     </modules>
   </component>
 </project>

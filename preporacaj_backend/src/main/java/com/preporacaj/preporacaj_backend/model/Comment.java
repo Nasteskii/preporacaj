@@ -7,7 +7,7 @@ import lombok.Data;
 @Entity
 public class Comment {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     @ManyToOne
     private Profile profile;

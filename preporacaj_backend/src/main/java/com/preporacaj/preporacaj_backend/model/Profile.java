@@ -10,7 +10,7 @@ import lombok.Data;
 @Entity
 public class Profile {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     private String name;
     private String surname;
