@@ -1,7 +1,7 @@
 import HomeComponent from "../../components/homeComponent/HomeComponent";
 
 function Home() {
-    return <HomeComponent></HomeComponent>
+    return <HomeComponent />
 }
 
 export default Home
