@@ -2,9 +2,9 @@ import ContainerComponent from "./components/containerComponent/ContainerCompone
 
 function App() {
   return (
-    <div>
+    <>
       <ContainerComponent />
-    </div>
+    </>
   );
 }
 

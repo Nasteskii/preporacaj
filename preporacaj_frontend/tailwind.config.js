@@ -6,7 +6,7 @@ export default {
       transparent: "transparent",
       current: "currentColor",
       blue: "#1fb6ff",
-      purple: "#7e5bef",
+      purple: "#800080",
       pink: "#ff49db",
       orange: "#ff7849",
       green: "#13ce66",

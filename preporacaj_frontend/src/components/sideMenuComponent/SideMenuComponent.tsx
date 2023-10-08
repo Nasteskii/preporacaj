@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, Route, Routes, useLocation } from "react-router-dom";
 
 import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
@@ -28,6 +28,12 @@ function SideMenuComponent() {
   const [showModal, setShowModal] = useState(false);
   const location = useLocation();
 
+  useEffect(() => {
+    if (window.location.pathname === "/") {
+      window.location.pathname = "/home";
+    }
+  }, []);
+
   const menuIconClick = () => {
     setMenuCollapse((prevCollapse) => !prevCollapse);
   };
@@ -38,13 +44,6 @@ function SideMenuComponent() {
 
   const closeModal = () => {
     setShowModal(false);
-  };
-
-  const getMenuItemClass = (route: string) => {
-    return (
-      "mt-24 w-fit " +
-      (location.pathname === route ? "border-2 rounded-2xl" : "")
-    );
   };
 
   return (
@@ -72,7 +71,11 @@ function SideMenuComponent() {
             <MenuItem
               icon={<FiHeart />}
               component={<Link to="/my-recommendations" />}
-              className={getMenuItemClass("/my-recommendations")}
+              className={`mt-24 w-fit ${
+                location.pathname === "/my-recommendations"
+                  ? "border-2 rounded-2xl"
+                  : ""
+              }`}
             >
               Мои препораки
             </MenuItem>

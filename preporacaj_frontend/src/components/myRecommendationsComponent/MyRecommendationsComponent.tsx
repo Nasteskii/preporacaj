@@ -1,5 +1,14 @@
+import TableComponent from "../tableComponent/TableComponent";
+
 function MyRecommendationsComponent() {
-  return <h2>My Recommendations Comp</h2>;
+  return (
+    <div className="bg-silver w-full pt-12 pb-32">
+      <div className="text-center text-3xl mb-12 text-purple">
+        Мои препораки
+      </div>
+      <TableComponent />
+    </div>
+  );
 }
 
 export default MyRecommendationsComponent;
