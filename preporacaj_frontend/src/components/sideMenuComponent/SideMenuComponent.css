@@ -1,10 +1,7 @@
-.sidebar .menu-item a {
-  flex-direction: column;
-}
 .sidebar svg {
-    margin: auto;
-    width: 40px;
-    height: 40px;
+  margin: auto;
+  width: 40px;
+  height: 40px;
 }
 @media only screen and (max-width: 720px) {
   html {

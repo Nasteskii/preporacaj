@@ -1,7 +1,7 @@
-import VehiclesComponent from "../../components/vehiclesComponent/VehiclesComponent"
+import VehiclesComponent from "../../components/vehiclesComponent/VehiclesComponent";
 
 function Vehicles() {
-    return <VehiclesComponent />
+  return <VehiclesComponent />;
 }
 
-export default Vehicles
+export default Vehicles;

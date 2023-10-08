@@ -1,9 +1,7 @@
 import SideMenuComponent from "../sideMenuComponent/SideMenuComponent";
 
 function ContainerComponent() {
-    return (
-        <SideMenuComponent />
-    );
+  return <SideMenuComponent />;
 }
 
 export default ContainerComponent;

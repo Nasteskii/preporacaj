@@ -1,7 +1,7 @@
 import MyRecommendationsComponent from "../../components/myRecommendationsComponent/MyRecommendationsComponent";
 
 function MyRecommendations() {
-    return <MyRecommendationsComponent />
+  return <MyRecommendationsComponent />;
 }
 
-export default MyRecommendations
+export default MyRecommendations;
