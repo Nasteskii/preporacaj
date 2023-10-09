@@ -4,7 +4,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 function ContainerComponent() {
   return (
     <Router>
-      <SideMenuComponent />;
+      <SideMenuComponent />
     </Router>
   );
 }

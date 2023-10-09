@@ -1,6 +1,9 @@
 function HomeComponent() {
   return (
-    <div className="bg-silver w-full">
+    <div
+      className="bg-silver w-full h-full"
+      style={{ height: "100% !important" }}
+    >
       <div className="m-36 text-center">
         <h1>Здраво</h1>
         <hr className="m-20" />

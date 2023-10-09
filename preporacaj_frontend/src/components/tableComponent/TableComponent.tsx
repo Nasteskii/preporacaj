@@ -1,6 +1,6 @@
 import DataTable from "react-data-table-component";
 import TextField from "@mui/material/TextField";
-import "./TableComponent.css";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 
 const columns = [
   {
@@ -108,14 +108,41 @@ const data = [
   },
 ];
 
+const theme = createTheme({
+  components: {
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          "&.Mui-focused": {
+            color: "#800080",
+          },
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          "& .MuiOutlinedInput-root": {
+            "&.Mui-focused fieldset": {
+              borderColor: "#800080",
+            },
+          },
+        },
+      },
+    },
+  },
+});
+
 const subHeaderComponent = (
-  <TextField
-    id="outlined-basic"
-    label="Search"
-    variant="outlined"
-    size="small"
-    style={{ margin: "5px" }}
-  />
+  <ThemeProvider theme={theme}>
+    <TextField
+      id="outlined-basic"
+      label="Search"
+      variant="outlined"
+      size="small"
+      sx={{ margin: "5px" }}
+    />
+  </ThemeProvider>
 );
 
 const customStyles = {
@@ -134,7 +161,6 @@ const customStyles = {
   rows: {
     style: {
       background: "#ecebff",
-      color: "#565584",
       fontSize: "14px",
     },
   },
@@ -149,7 +175,7 @@ const customStyles = {
 
 function TableComponent() {
   return (
-    <div className="w-3/4 m-auto h-full overflow-auto">
+    <div className="w-3/4 m-auto h-full">
       <DataTable
         defaultSortFieldId={1}
         pagination

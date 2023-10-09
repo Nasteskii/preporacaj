@@ -47,10 +47,13 @@ function SideMenuComponent() {
   };
 
   return (
-    <div className="flex no-wrap h-screen w-screen">
-      <div className={menuCollapse ? "w-20" : "w-64"}>
+    <div className="flex no-wrap h-screen">
+      <div
+        className={menuCollapse ? "w-20" : "w-64"}
+        style={menuCollapse ? { minWidth: "80px" } : { minWidth: "248px" }}
+      >
         <Sidebar
-          className="h-screen w-full min-w-full bg-metal sidebar"
+          className="h-screen bg-metal bg-metal sidebar"
           collapsed={menuCollapse}
         >
           <Menu>
@@ -60,7 +63,9 @@ function SideMenuComponent() {
               component={<Link to="/home" />}
               className="menu-item mt-5"
             >
-              <h2 className="text-3xl text-center p-3">Препорачај</h2>
+              <h2 className="text-3xl text-center text-purple p-3">
+                Препорачај
+              </h2>
             </MenuItem>
             <div
               className="text-black absolute right-3.5 z-10 font-bold text-xl top-20 cursor-pointer w-14 min-w-14"
@@ -73,7 +78,7 @@ function SideMenuComponent() {
               component={<Link to="/my-recommendations" />}
               className={`mt-24 w-fit ${
                 location.pathname === "/my-recommendations"
-                  ? "border-2 rounded-2xl"
+                  ? "border-2 rounded-2xl border-purple"
                   : ""
               }`}
             >
@@ -83,7 +88,9 @@ function SideMenuComponent() {
               icon={<RiCarLine />}
               component={<Link to="/vehicles" />}
               className={
-                location.pathname === "/vehicles" ? "border-2 rounded-2xl" : ""
+                location.pathname === "/vehicles"
+                  ? "border-2 rounded-2xl border-purple"
+                  : ""
               }
             >
               Возила
@@ -93,7 +100,7 @@ function SideMenuComponent() {
               component={<Link to="/home-appliances" />}
               className={
                 location.pathname === "/home-appliances"
-                  ? "border-2 rounded-2xl"
+                  ? "border-2 rounded-2xl border-purple"
                   : ""
               }
             >
@@ -103,7 +110,9 @@ function SideMenuComponent() {
               icon={<FiBookOpen />}
               component={<Link to="/books" />}
               className={
-                location.pathname === "/books" ? "border-2 rounded-2xl" : ""
+                location.pathname === "/books"
+                  ? "border-2 rounded-2xl border-purple"
+                  : ""
               }
             >
               Книги
@@ -112,7 +121,9 @@ function SideMenuComponent() {
               icon={<MdOutlineDesktopWindows />}
               component={<Link to="/IT" />}
               className={
-                location.pathname === "/IT" ? "border-2 rounded-2xl" : ""
+                location.pathname === "/IT"
+                  ? "border-2 rounded-2xl border-purple"
+                  : ""
               }
             >
               ИТ и компјутери
