@@ -5,6 +5,7 @@ export default {
     colors: {
       transparent: "transparent",
       current: "currentColor",
+      black: "#213547",
       blue: "#1fb6ff",
       purple: "#800080",
       pink: "#ff49db",

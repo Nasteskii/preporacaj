@@ -1,47 +1,48 @@
 import DataTable from "react-data-table-component";
 import TextField from "@mui/material/TextField";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { Link, useLocation } from "react-router-dom";
+import RecommendationComponent from "../recommendationComponent/RecommendationComponent";
 
 const columns = [
   {
-    name: "Title",
-    selector: (row: any) => row.title,
+    name: "Id",
+    selector: (row: any) => row.id,
     sortable: true,
-  },
-  {
-    name: "Year",
-    selector: (row: any) => row.year,
-    sortable: true,
-  },
-  {
-    name: "Title",
-    selector: (row: any) => row.title,
-    sortable: true,
-  },
-  {
-    name: "Year",
-    selector: (row: any) => row.year,
-    sortable: true,
+    cell: (row: any) => (
+      <Link
+        to={`${row.id}`}
+        className="no-underline text-black hover:text-purple w-full"
+      >
+        {row.id}
+      </Link>
+    ),
   },
   {
     name: "Title",
     selector: (row: any) => row.title,
     sortable: true,
+    cell: (row: any) => (
+      <Link
+        to={`${row.id}`}
+        className="no-underline text-black hover:text-purple w-full"
+      >
+        {row.title}
+      </Link>
+    ),
   },
   {
     name: "Year",
     selector: (row: any) => row.year,
     sortable: true,
-  },
-  {
-    name: "Title",
-    selector: (row: any) => row.title,
-    sortable: true,
-  },
-  {
-    name: "Year",
-    selector: (row: any) => row.year,
-    sortable: true,
+    cell: (row: any) => (
+      <Link
+        to={`${row.id}`}
+        className="no-underline text-black hover:text-purple w-full"
+      >
+        {row.year}
+      </Link>
+    ),
   },
 ];
 
@@ -174,21 +175,46 @@ const customStyles = {
 };
 
 function TableComponent() {
-  return (
-    <div className="w-3/4 m-auto h-full">
-      <DataTable
-        defaultSortFieldId={1}
-        pagination
-        responsive
-        subHeader
-        subHeaderWrap
-        subHeaderComponent={subHeaderComponent}
-        columns={columns}
-        data={data}
-        customStyles={customStyles}
-      />
-    </div>
-  );
+  const location = useLocation();
+  const path = location.pathname;
+
+  const allowedPaths = [
+    "/my-recommendations",
+    "/vehicles",
+    "/home-appliances",
+    "/books",
+    "/IT",
+  ];
+
+  if (allowedPaths.includes(path)) {
+    return (
+      <div className="w-3/4 m-auto h-full">
+        <DataTable
+          defaultSortFieldId={1}
+          pagination
+          responsive
+          subHeader
+          subHeaderWrap
+          subHeaderComponent={subHeaderComponent}
+          columns={columns}
+          data={data}
+          customStyles={customStyles}
+        />
+      </div>
+    );
+  } else {
+    const recommendationType = path.substring(1, path.lastIndexOf("/"));
+    const recommendationId = path.substring(path.lastIndexOf("/") + 1);
+
+    return (
+      <div className="w-3/4 m-auto h-full">
+        <RecommendationComponent
+          recommendationType={recommendationType}
+          recommendationId={recommendationId}
+        />
+      </div>
+    );
+  }
 }
 
 export default TableComponent;

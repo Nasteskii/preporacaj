@@ -28,10 +28,23 @@ function SideMenuComponent() {
   const [showModal, setShowModal] = useState(false);
   const location = useLocation();
 
+  const handleWindowResize = () => {
+    if (window.innerWidth <= 720) {
+      setMenuCollapse(true);
+    }
+  };
+
   useEffect(() => {
     if (window.location.pathname === "/") {
       window.location.pathname = "/home";
     }
+    handleWindowResize();
+
+    window.addEventListener("resize", handleWindowResize);
+
+    return () => {
+      window.removeEventListener("resize", handleWindowResize);
+    };
   }, []);
 
   const menuIconClick = () => {
@@ -144,11 +157,11 @@ function SideMenuComponent() {
       </div>
       <Routes>
         <Route path="/home" element={<Home />} />
-        <Route path="/my-recommendations" element={<MyRecommendations />} />
-        <Route path="/vehicles" element={<Vehicles />} />
-        <Route path="/home-appliances" element={<HomeAppliances />} />
-        <Route path="/books" element={<Books />} />
-        <Route path="/IT" element={<IT />} />
+        <Route path="/my-recommendations/*" element={<MyRecommendations />} />
+        <Route path="/vehicles/*" element={<Vehicles />} />
+        <Route path="/home-appliances/*" element={<HomeAppliances />} />
+        <Route path="/books/*" element={<Books />} />
+        <Route path="/IT/*" element={<IT />} />
         <Route path="/logout" />
       </Routes>
     </div>
