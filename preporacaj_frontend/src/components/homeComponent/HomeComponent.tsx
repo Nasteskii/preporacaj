@@ -5,9 +5,9 @@ function HomeComponent() {
       style={{ height: "100% !important" }}
     >
       <div className="m-36 text-center text-purple">
-        <h1>Здраво</h1>
-        <hr className="m-20" />
         <h1>Добредојдовте во Препорачај</h1>
+        <hr className="m-20" />
+        <h2 className="text-3xl">Одберете категорија</h2>
       </div>
     </div>
   );
