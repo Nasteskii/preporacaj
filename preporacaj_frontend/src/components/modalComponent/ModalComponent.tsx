@@ -1,8 +1,12 @@
+import { Input } from "@mui/material";
+
 const ModalComponent = ({
   modalText,
+  modalInputs,
   closeModal,
 }: {
   modalText: string;
+  modalInputs?: string[] | null;
   closeModal: any;
 }) => {
   return (
@@ -13,7 +17,32 @@ const ModalComponent = ({
           <div className="modal-content text-center text-white">
             <p className="text-xl">{modalText}</p>
           </div>
-          <div className="mt-5 flex gap-4">
+          <div>
+            {modalInputs && (
+              <form>
+                <Input
+                  name="name"
+                  placeholder="Име"
+                  defaultValue={modalInputs[0]}
+                  autoFocus={false}
+                  fullWidth={true}
+                  color="secondary"
+                  style={{ color: "white" }}
+                />
+                <Input
+                  name="content"
+                  placeholder="Содржина"
+                  defaultValue={modalInputs[1]}
+                  autoFocus={false}
+                  fullWidth={true}
+                  color="secondary"
+                  multiline={true}
+                  style={{ color: "white" }}
+                />
+              </form>
+            )}
+          </div>
+          <div className="mt-5 justify-center flex gap-4">
             <button onClick={closeModal}>Назад</button>
             <button>Потврди</button>
           </div>

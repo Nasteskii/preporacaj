@@ -3,6 +3,10 @@ import TextField from "@mui/material/TextField";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { Link, useLocation } from "react-router-dom";
 import RecommendationComponent from "../recommendationComponent/RecommendationComponent";
+import { FiPlus } from "react-icons/fi";
+import { Button } from "@mui/material";
+import ModalComponent from "../modalComponent/ModalComponent";
+import { useState } from "react";
 
 const columns = [
   {
@@ -12,7 +16,7 @@ const columns = [
     cell: (row: any) => (
       <Link
         to={`${row.id}`}
-        className="no-underline text-black hover:text-purple w-full"
+        className="no-underline text-black hover:text-purple w-full h-full py-6"
       >
         {row.id}
       </Link>
@@ -25,7 +29,7 @@ const columns = [
     cell: (row: any) => (
       <Link
         to={`${row.id}`}
-        className="no-underline text-black hover:text-purple w-full"
+        className="no-underline text-black hover:text-purple w-full h-full py-6"
       >
         {row.title}
       </Link>
@@ -38,7 +42,7 @@ const columns = [
     cell: (row: any) => (
       <Link
         to={`${row.id}`}
-        className="no-underline text-black hover:text-purple w-full"
+        className="no-underline text-black hover:text-purple w-full h-full py-6"
       >
         {row.year}
       </Link>
@@ -134,42 +138,34 @@ const theme = createTheme({
   },
 });
 
-const subHeaderComponent = (
-  <ThemeProvider theme={theme}>
-    <TextField
-      id="outlined-basic"
-      label="Search"
-      variant="outlined"
-      size="small"
-      sx={{ margin: "5px" }}
-    />
-  </ThemeProvider>
-);
-
 const customStyles = {
   subHeader: {
     style: {
       background: "#ecebff",
+      justifyContent: "space-between",
+      marginBottom: "16px",
+      padding: "0",
     },
   },
   headCells: {
     style: {
       background: "#ecebff",
       color: "purple",
-      fontSize: "14px",
+      fontSize: "18px",
     },
   },
   rows: {
     style: {
       background: "#ecebff",
-      fontSize: "14px",
+      height: "70px",
+      fontSize: "16px",
     },
   },
   pagination: {
     style: {
       background: "#ecebff",
       color: "purple",
-      fontSize: "14px",
+      fontSize: "16px",
     },
   },
 };
@@ -177,6 +173,44 @@ const customStyles = {
 function TableComponent() {
   const location = useLocation();
   const path = location.pathname;
+  const [showModal, setShowModal] = useState(false);
+  const [modalText, setModalText] = useState("Дали сте сигурни?");
+  const [modalInputs, setModalInputs] = useState<string[] | null>(null);
+
+  const openAddModal = () => {
+    setShowModal(true);
+    setModalText("Додади препорака");
+    const inputs = ["Име", "Содржина"];
+    setModalInputs(inputs);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  const subHeaderComponent = (
+    <ThemeProvider theme={theme}>
+      <Button
+        onClick={() => openAddModal()}
+        children={
+          <FiPlus
+            style={{
+              color: "#800080",
+              width: "30px",
+              height: "30px",
+            }}
+          />
+        }
+        color="secondary"
+      />
+      <TextField
+        id="outlined-basic"
+        label="Search"
+        variant="outlined"
+        size="small"
+      />
+    </ThemeProvider>
+  );
 
   const allowedPaths = [
     "/my-recommendations",
@@ -189,6 +223,13 @@ function TableComponent() {
   if (allowedPaths.includes(path)) {
     return (
       <div className="w-3/4 m-auto h-full">
+        {showModal && (
+          <ModalComponent
+            modalText={modalText}
+            modalInputs={modalInputs}
+            closeModal={closeModal}
+          />
+        )}
         <DataTable
           defaultSortFieldId={1}
           pagination
