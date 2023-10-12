@@ -17,7 +17,7 @@ import java.util.NoSuchElementException;
 @RestController
 @RequestMapping("api/recommendations")
 @AllArgsConstructor
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001", "http://localhost:5173", "http://localhost:5174"})
 public class RecommendationsController {
     private final RecommendationService recommendationService;
 
@@ -26,7 +26,7 @@ public class RecommendationsController {
         return recommendationService.getAll(pageable).getContent();
     }
 
-    @GetMapping("/{recommendationCategory}")
+    @GetMapping("/category/{recommendationCategory}")
     public List<Recommendation> getByCategory(@PathVariable RecommendationCategory recommendationCategory, Pageable pageable) {
         return recommendationService.getByCategory(recommendationCategory, pageable).getContent();
     }

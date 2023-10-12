@@ -7,111 +7,7 @@ import { FiPlus } from "react-icons/fi";
 import { Button } from "@mui/material";
 import ModalComponent from "../modalComponent/ModalComponent";
 import { useState } from "react";
-
-const columns = [
-  {
-    name: "Id",
-    selector: (row: any) => row.id,
-    sortable: true,
-    cell: (row: any) => (
-      <Link
-        to={`${row.id}`}
-        className="no-underline text-black hover:text-purple w-full h-full py-6"
-      >
-        {row.id}
-      </Link>
-    ),
-  },
-  {
-    name: "Title",
-    selector: (row: any) => row.title,
-    sortable: true,
-    cell: (row: any) => (
-      <Link
-        to={`${row.id}`}
-        className="no-underline text-black hover:text-purple w-full h-full py-6"
-      >
-        {row.title}
-      </Link>
-    ),
-  },
-  {
-    name: "Year",
-    selector: (row: any) => row.year,
-    sortable: true,
-    cell: (row: any) => (
-      <Link
-        to={`${row.id}`}
-        className="no-underline text-black hover:text-purple w-full h-full py-6"
-      >
-        {row.year}
-      </Link>
-    ),
-  },
-];
-
-const data = [
-  {
-    id: 1,
-    title: "Beetlejuice",
-    year: "1988",
-  },
-  {
-    id: 2,
-    title: "Ghostbusters",
-    year: "1984",
-  },
-  {
-    id: 3,
-    title: "Beetlejuice",
-    year: "1988",
-  },
-  {
-    id: 4,
-    title: "Ghostbusters",
-    year: "1984",
-  },
-  {
-    id: 5,
-    title: "Beetlejuice",
-    year: "1988",
-  },
-  {
-    id: 6,
-    title: "Ghostbusters",
-    year: "1984",
-  },
-  {
-    id: 7,
-    title: "Beetlejuice",
-    year: "1988",
-  },
-  {
-    id: 8,
-    title: "Ghostbusters",
-    year: "1984",
-  },
-  {
-    id: 9,
-    title: "Beetlejuice",
-    year: "1988",
-  },
-  {
-    id: 10,
-    title: "Ghostbusters",
-    year: "1984",
-  },
-  {
-    id: 11,
-    title: "Beetlejuice",
-    year: "1988",
-  },
-  {
-    id: 12,
-    title: "Ghostbusters",
-    year: "1984",
-  },
-];
+import { RecommendationsList } from "../../types/RecommendationsList";
 
 const theme = createTheme({
   components: {
@@ -170,7 +66,7 @@ const customStyles = {
   },
 };
 
-function TableComponent() {
+function TableComponent({ recommendations }: RecommendationsList) {
   const location = useLocation();
   const path = location.pathname;
   const [showModal, setShowModal] = useState(false);
@@ -211,6 +107,64 @@ function TableComponent() {
       />
     </ThemeProvider>
   );
+
+  const columns = [
+    {
+      name: "Title",
+      selector: (row: any) => row.title,
+      sortable: true,
+      cell: (row: any) => (
+        <Link
+          to={`${row.id}`}
+          className="no-underline text-black hover:text-purple w-full h-full py-6"
+        >
+          {row.title}
+        </Link>
+      ),
+    },
+    {
+      name: "Rating",
+      selector: (row: any) => row.rating,
+      sortable: true,
+      cell: (row: any) => (
+        <Link
+          to={`${row.id}`}
+          className="no-underline text-black hover:text-purple w-full h-full py-6"
+        >
+          {row.rating}
+        </Link>
+      ),
+    },
+    {
+      name: "User",
+      selector: (row: any) => row.username,
+      sortable: true,
+      cell: (row: any) => (
+        <Link
+          to={`${row.id}`}
+          className="no-underline text-black hover:text-purple w-full h-full py-6"
+        >
+          {row.username}
+        </Link>
+      ),
+    },
+  ];
+  let data =
+    recommendations && recommendations.length > 0
+      ? recommendations.map((recommendation) => ({
+          id: recommendation.id,
+          username: recommendation.profile.username,
+          title: recommendation.title,
+          rating: recommendation.rating,
+        }))
+      : [
+          {
+            id: "Нема податоци",
+            username: "Нема податоци",
+            title: "Нема податоци",
+            rating: "Нема податоци",
+          },
+        ];
 
   const allowedPaths = [
     "/my-recommendations",

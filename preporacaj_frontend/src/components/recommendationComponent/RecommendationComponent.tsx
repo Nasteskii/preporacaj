@@ -1,20 +1,36 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, TextField, TextareaAutosize } from "@mui/material";
 import CommentComponent from "../commentComponent/CommentComponent";
 import ModalComponent from "../modalComponent/ModalComponent";
-
-interface RecommendationProps {
-  recommendationType: string;
-  recommendationId: string;
-}
+import { RecommendationMeta } from "../../types/RecommendationMeta";
+import { Recommendation } from "../../types/Recommendation";
+import axios from "axios";
 
 function RecommendationComponent({
   recommendationType,
   recommendationId,
-}: RecommendationProps) {
+}: RecommendationMeta) {
   const [showModal, setShowModal] = useState(false);
   const [modalText, setModalText] = useState("Дали сте сигурни?");
   const [modalInputs, setModalInputs] = useState<string[] | null>(null);
+  const [recommendation, setRecommendation] = useState<Recommendation | null>(
+    null
+  );
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:9090/api/recommendations/category/VEHICLES/"
+        );
+        setRecommendation(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const openEditModal = () => {
     setShowModal(true);
@@ -46,8 +62,12 @@ function RecommendationComponent({
       </h2>
       <div>
         <div className="flex justify-end gap-4 m-5">
-          <Button onClick={() => openEditModal()}>Edit</Button>
-          <Button onClick={() => deleteRecommendation()}>Delete</Button>
+          <Button onClick={() => openEditModal()} color="secondary">
+            Edit
+          </Button>
+          <Button onClick={() => deleteRecommendation()} color="secondary">
+            Delete
+          </Button>
         </div>
         <div>
           <TextField
@@ -61,7 +81,7 @@ function RecommendationComponent({
         </div>
       </div>
       <div className="mt-12">
-        <h2>Comments</h2>
+        <h2 className="text-purple text-xl mb-4">Comments</h2>
         <CommentComponent />
         <CommentComponent />
         <CommentComponent />
