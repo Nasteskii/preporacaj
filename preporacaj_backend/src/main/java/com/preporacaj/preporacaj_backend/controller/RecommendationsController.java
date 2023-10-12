@@ -52,14 +52,14 @@ public class RecommendationsController {
 
     @PostMapping("/add")
     public ResponseEntity<Recommendation> add(@RequestParam String title,
-                                              @RequestParam String recommendationContent,
+                                              @RequestParam String content,
                                               @RequestParam String category,
                                               @RequestParam String profileId) {
         try {
             RecommendationCategory recommendationCategory = RecommendationCategory.valueOf(category.toUpperCase());
             return new ResponseEntity<>(recommendationService.addRecommendation(
                     title,
-                    recommendationContent,
+                    content,
                     recommendationCategory,
                     profileId),
                     HttpStatus.OK);

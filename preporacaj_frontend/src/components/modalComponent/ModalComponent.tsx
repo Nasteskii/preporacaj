@@ -1,4 +1,6 @@
 import { Input } from "@mui/material";
+import axios from "axios";
+import { useLocation } from "react-router-dom";
 
 const ModalComponent = ({
   modalText,
@@ -9,6 +11,94 @@ const ModalComponent = ({
   modalInputs?: string[] | null;
   closeModal: any;
 }) => {
+  const location = useLocation();
+  const path = location.pathname;
+
+  const handleSubmit = async (event: any) => {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    console.log(formData);
+    try {
+      const response = await axios.post(
+        "http://localhost:9090/api/recommendations/add",
+        formData
+      );
+
+      console.log("Form submitted successfully:", response.data);
+      closeModal();
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
+
+  const handleRecommendationInputs = () => {
+    if (path.substring(1) === "vehicles") {
+      return (
+        <Input
+          name="category"
+          value="VEHICLES"
+          inputProps={{
+            style: {
+              WebkitTextFillColor: "white",
+              color: "white",
+            },
+          }}
+          style={{ display: "none" }}
+        />
+      );
+    } else if (path.substring(1) === "home-appliances") {
+      return (
+        <Input
+          name="category"
+          value="HOME"
+          inputProps={{
+            style: {
+              WebkitTextFillColor: "white",
+              color: "white",
+            },
+          }}
+          style={{ display: "none" }}
+        />
+      );
+    } else if (path.substring(1) === "books") {
+      return (
+        <Input
+          name="category"
+          value="BOOKS"
+          inputProps={{
+            style: {
+              WebkitTextFillColor: "white",
+              color: "white",
+            },
+          }}
+          style={{ display: "none" }}
+        />
+      );
+    } else {
+      return (
+        <Input
+          name="category"
+          value="IT"
+          inputProps={{
+            style: {
+              WebkitTextFillColor: "white",
+              color: "white",
+            },
+          }}
+          style={{ display: "none" }}
+        />
+      );
+    }
+  };
+
+  const allowedPaths = [
+    "/my-recommendations",
+    "/vehicles",
+    "/home-appliances",
+    "/books",
+    "/IT",
+  ];
+
   return (
     <>
       <div className="fixed top-0 left-0 w-full h-full z-10 bg-silver opacity-70"></div>
@@ -18,17 +108,24 @@ const ModalComponent = ({
             <p className="text-xl">{modalText}</p>
           </div>
           <div>
-            {modalInputs && (
-              <form>
-                <Input
-                  name="name"
-                  placeholder="Име"
-                  defaultValue={modalInputs[0]}
-                  autoFocus={false}
-                  fullWidth={true}
-                  color="secondary"
-                  style={{ color: "white" }}
-                />
+            {modalInputs ? (
+              <form onSubmit={handleSubmit}>
+                {allowedPaths.includes(
+                  path.substring(1, path.indexOf("/"))
+                ) && (
+                  <>
+                    {handleRecommendationInputs()}
+                    <Input
+                      name="title"
+                      placeholder="Име"
+                      defaultValue={modalInputs[0]}
+                      autoFocus={false}
+                      fullWidth={true}
+                      color="secondary"
+                      style={{ color: "white" }}
+                    />
+                  </>
+                )}
                 <Input
                   name="content"
                   placeholder="Содржина"
@@ -39,12 +136,22 @@ const ModalComponent = ({
                   multiline={true}
                   style={{ color: "white" }}
                 />
+                <Input name="profileId" value="1" style={{ display: "none" }} />
+                <div className="mt-5 justify-center flex gap-4">
+                  <button onClick={closeModal}>Назад</button>
+                  <button type="submit" className="bg-white">
+                    Потврди
+                  </button>
+                </div>
               </form>
+            ) : (
+              <div className="mt-5 justify-center flex gap-4">
+                <button onClick={closeModal}>Назад</button>
+                <button type="submit" className="bg-white">
+                  Потврди
+                </button>
+              </div>
             )}
-          </div>
-          <div className="mt-5 justify-center flex gap-4">
-            <button onClick={closeModal}>Назад</button>
-            <button>Потврди</button>
           </div>
         </div>
       </div>

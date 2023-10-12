@@ -32,12 +32,12 @@ public class CommentController {
     @PostMapping("/{recommendationId}/add")
     public ResponseEntity<Comment> add(@PathVariable String recommendationId,
                                        @RequestParam String profileId,
-                                       @RequestParam String commentContent) {
+                                       @RequestParam String content) {
         try {
             return new ResponseEntity<>(commentService.addComment(
                     profileId,
                     recommendationId,
-                    commentContent),
+                    content),
                     HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);

@@ -20,9 +20,7 @@
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files>
-      <object connection-id="f03625ce-efe7-42a3-b6bb-236f042ad460" object-ref="schemas/public/tables/recommendation" />
-    </open-files>
+    <open-files />
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
     <filter-actions connection-id="f03625ce-efe7-42a3-b6bb-236f042ad460" dataset="public.comment" active-filter-id="EMPTY_FILTER" />
