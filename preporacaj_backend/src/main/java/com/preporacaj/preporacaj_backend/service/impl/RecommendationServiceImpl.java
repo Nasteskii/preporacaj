@@ -26,6 +26,11 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     @Override
+    public Recommendation getByRecommendationId(String recommendationId) {
+        return recommendationRepository.findById(recommendationId).orElseThrow(NoSuchElementException::new);
+    }
+
+    @Override
     public Page<Recommendation> getByCategory(RecommendationCategory recommendationCategory, Pageable pageable) {
         return recommendationRepository.findAllByRecommendationCategory(recommendationCategory, pageable);
     }

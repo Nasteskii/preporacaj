@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface RecommendationService {
     Page<Recommendation> getAll(Pageable pageable);
+    Recommendation getByRecommendationId(String recommendationId);
     Page<Recommendation> getByCategory(RecommendationCategory recommendationCategory, Pageable pageable);
     Page<Recommendation> getByProfileId(String profileId, Pageable pageable);
     Recommendation addRecommendation(String title, String recommendationContent, RecommendationCategory recommendationCategory, String profileId);

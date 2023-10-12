@@ -26,12 +26,22 @@ public class RecommendationsController {
         return recommendationService.getAll(pageable).getContent();
     }
 
+    @GetMapping("/{recommendationId}")
+    public ResponseEntity<Recommendation> getById(@PathVariable String recommendationId) {
+        try {
+            return new ResponseEntity<>(recommendationService.getByRecommendationId(recommendationId),
+                    HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+    }
+
     @GetMapping("/category/{recommendationCategory}")
     public List<Recommendation> getByCategory(@PathVariable RecommendationCategory recommendationCategory, Pageable pageable) {
         return recommendationService.getByCategory(recommendationCategory, pageable).getContent();
     }
 
-    @GetMapping("/{profileId}")
+    @GetMapping("/profile/{profileId}")
     public List<Recommendation> getByProfileId(@PathVariable String profileId, Pageable pageable) {
         try {
             return recommendationService.getByProfileId(profileId, pageable).getContent();
