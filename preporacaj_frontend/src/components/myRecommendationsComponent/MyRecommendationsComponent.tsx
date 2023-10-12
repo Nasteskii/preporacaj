@@ -12,7 +12,7 @@ function MyRecommendationsComponent() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:9090/api/recommendations/1" //Fix this
+          "http://localhost:9090/api/recommendations/profile/1" //Fix this
         );
         setRecommendations(response.data);
       } catch (error) {

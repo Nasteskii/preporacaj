@@ -5,6 +5,7 @@ import ModalComponent from "../modalComponent/ModalComponent";
 import { RecommendationMeta } from "../../types/RecommendationMeta";
 import { Recommendation } from "../../types/Recommendation";
 import axios from "axios";
+import { RecommendationComment } from "../../types/RecommendationComment";
 
 function RecommendationComponent({
   recommendationType,
@@ -16,14 +17,22 @@ function RecommendationComponent({
   const [recommendation, setRecommendation] = useState<Recommendation | null>(
     null
   );
+  const [comments, setComments] = useState<RecommendationComment[] | null>(
+    null
+  );
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:9090/api/recommendations/category/VEHICLES/"
+        const recommendationResponse = await axios.get(
+          `http://localhost:9090/api/recommendations/${recommendationId}`
         );
-        setRecommendation(response.data);
+        setRecommendation(recommendationResponse.data);
+
+        const commentsResponse = await axios.get(
+          `http://localhost:9090/api/comments/${recommendationId}`
+        );
+        setComments(commentsResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -56,10 +65,7 @@ function RecommendationComponent({
           closeModal={closeModal}
         />
       )}
-      <h2 className="text-center m-5 ">
-        {recommendationType}/{recommendationId} <br />
-        Name
-      </h2>
+      <h2 className="text-center text-2xl m-5">{recommendation?.title}</h2>
       <div>
         <div className="flex justify-end gap-4 m-5">
           <Button onClick={() => openEditModal()} color="secondary">
@@ -72,7 +78,7 @@ function RecommendationComponent({
         <div>
           <TextField
             className="bg-gray-light"
-            value="Content"
+            value={recommendation?.recommendationContent}
             disabled={true}
             fullWidth={true}
             multiline={true}
@@ -82,15 +88,14 @@ function RecommendationComponent({
       </div>
       <div className="mt-12">
         <h2 className="text-purple text-xl mb-4">Comments</h2>
-        <CommentComponent />
-        <CommentComponent />
-        <CommentComponent />
-        <CommentComponent />
-        <CommentComponent />
-        <CommentComponent />
-        <CommentComponent />
-        <CommentComponent />
-        <CommentComponent />
+        {comments && comments.length > 0
+          ? comments.map((comment) => (
+              <CommentComponent
+                key={comment.id}
+                recommendationComment={comment}
+              />
+            ))
+          : "Нема коментари"}
       </div>
     </div>
   );

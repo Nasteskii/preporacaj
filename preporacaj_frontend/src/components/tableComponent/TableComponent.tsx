@@ -115,7 +115,7 @@ function TableComponent({ recommendations }: RecommendationsList) {
       sortable: true,
       cell: (row: any) => (
         <Link
-          to={`${row.id}`}
+          to={`${row.id !== "Нема податоци" ? row.id : ""}`}
           className="no-underline text-black hover:text-purple w-full h-full py-6"
         >
           {row.title}
@@ -128,7 +128,7 @@ function TableComponent({ recommendations }: RecommendationsList) {
       sortable: true,
       cell: (row: any) => (
         <Link
-          to={`${row.id}`}
+          to={`${row.id !== "Нема податоци" ? row.id : ""}`}
           className="no-underline text-black hover:text-purple w-full h-full py-6"
         >
           {row.rating}
@@ -141,7 +141,7 @@ function TableComponent({ recommendations }: RecommendationsList) {
       sortable: true,
       cell: (row: any) => (
         <Link
-          to={`${row.id}`}
+          to={`${row.id !== "Нема податоци" ? row.id : ""}`}
           className="no-underline text-black hover:text-purple w-full h-full py-6"
         >
           {row.username}

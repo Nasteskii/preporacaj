@@ -5,4 +5,5 @@ export interface Recommendation {
   title: string;
   rating: string;
   profile: Profile;
+  recommendationContent: string;
 }
