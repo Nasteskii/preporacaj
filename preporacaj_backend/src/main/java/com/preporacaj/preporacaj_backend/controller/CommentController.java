@@ -48,13 +48,13 @@ public class CommentController {
     public ResponseEntity<Comment> edit(@PathVariable String recommendationId,
                                         @PathVariable String commentId,
                                         @RequestParam String profileId,
-                                        @RequestParam String commentContent) {
+                                        @RequestParam String content) {
         try {
             return new ResponseEntity<>(commentService.editComment(
                     commentId,
                     profileId,
                     recommendationId,
-                    commentContent),
+                    content),
                     HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);

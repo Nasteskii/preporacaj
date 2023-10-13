@@ -6,10 +6,14 @@ const ModalComponent = ({
   modalText,
   modalInputs,
   closeModal,
+  action,
+  commentId,
 }: {
   modalText: string;
   modalInputs?: string[] | null;
   closeModal: any;
+  action: string;
+  commentId?: string;
 }) => {
   const location = useLocation();
   const path = location.pathname;
@@ -17,14 +21,41 @@ const ModalComponent = ({
   const handleSubmit = async (event: any) => {
     event.preventDefault();
     const formData = new FormData(event.target);
-    console.log(formData);
     try {
-      const response = await axios.post(
-        "http://localhost:9090/api/recommendations/add",
-        formData
-      );
+      let response;
+      if (action === "addRecommendation") {
+        response = await axios.post(
+          "http://localhost:9090/api/recommendations/add",
+          formData
+        );
+      } else if (action === "editRecommendation") {
+        response = await axios.post(
+          `http://localhost:9090/api/recommendations/edit/${path.substring(
+            path.lastIndexOf("/") + 1
+          )}`,
+          formData
+        );
+      } else if (action === "deleteRecommendation") {
+        response = await axios.delete(
+          `http://localhost:9090/api/recommendations/delete/${path.substring(
+            path.lastIndexOf("/") + 1
+          )}`
+        );
+        history.go(-1);
+      } else if (action === "editComment") {
+        response = await axios.post(
+          `http://localhost:9090/api/comments/${path.substring(
+            path.lastIndexOf("/") + 1
+          )}/edit/${commentId}`,
+          formData
+        );
+      } else if (action === "deleteComment") {
+        response = await axios.delete(
+          `http://localhost:9090/api/comments/delete/${commentId}`
+        );
+      }
 
-      console.log("Form submitted successfully:", response.data);
+      console.log("Form submitted successfully:", response?.data);
       closeModal();
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -34,70 +65,18 @@ const ModalComponent = ({
   const handleRecommendationInputs = () => {
     if (path.substring(1) === "vehicles") {
       return (
-        <Input
-          name="category"
-          value="VEHICLES"
-          inputProps={{
-            style: {
-              WebkitTextFillColor: "white",
-              color: "white",
-            },
-          }}
-          style={{ display: "none" }}
-        />
+        <Input name="category" value="VEHICLES" style={{ display: "none" }} />
       );
     } else if (path.substring(1) === "home-appliances") {
-      return (
-        <Input
-          name="category"
-          value="HOME"
-          inputProps={{
-            style: {
-              WebkitTextFillColor: "white",
-              color: "white",
-            },
-          }}
-          style={{ display: "none" }}
-        />
-      );
+      return <Input name="category" value="HOME" style={{ display: "none" }} />;
     } else if (path.substring(1) === "books") {
       return (
-        <Input
-          name="category"
-          value="BOOKS"
-          inputProps={{
-            style: {
-              WebkitTextFillColor: "white",
-              color: "white",
-            },
-          }}
-          style={{ display: "none" }}
-        />
+        <Input name="category" value="BOOKS" style={{ display: "none" }} />
       );
     } else {
-      return (
-        <Input
-          name="category"
-          value="IT"
-          inputProps={{
-            style: {
-              WebkitTextFillColor: "white",
-              color: "white",
-            },
-          }}
-          style={{ display: "none" }}
-        />
-      );
+      return <Input name="category" value="IT" style={{ display: "none" }} />;
     }
   };
-
-  const allowedPaths = [
-    "/my-recommendations",
-    "/vehicles",
-    "/home-appliances",
-    "/books",
-    "/IT",
-  ];
 
   return (
     <>
@@ -110,9 +89,8 @@ const ModalComponent = ({
           <div>
             {modalInputs ? (
               <form onSubmit={handleSubmit}>
-                {allowedPaths.includes(
-                  path.substring(1, path.indexOf("/"))
-                ) && (
+                {(action === "addRecommendation" ||
+                  action === "editRecommendation") && (
                   <>
                     {handleRecommendationInputs()}
                     <Input
@@ -138,19 +116,34 @@ const ModalComponent = ({
                 />
                 <Input name="profileId" value="1" style={{ display: "none" }} />
                 <div className="mt-5 justify-center flex gap-4">
+                  {action === "editRecommendation" ||
+                  action === "deleteRecommendation" ||
+                  action === "editComment" ? (
+                    <>
+                      <button onClick={closeModal}>Назад</button>
+                      <button type="submit" className="bg-white">
+                        Потврди
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button onClick={closeModal}>Откажи</button>
+                      <button type="submit" className="bg-white">
+                        Додади
+                      </button>
+                    </>
+                  )}
+                </div>
+              </form>
+            ) : (
+              <form onSubmit={handleSubmit}>
+                <div className="mt-5 justify-center flex gap-4">
                   <button onClick={closeModal}>Назад</button>
                   <button type="submit" className="bg-white">
                     Потврди
                   </button>
                 </div>
               </form>
-            ) : (
-              <div className="mt-5 justify-center flex gap-4">
-                <button onClick={closeModal}>Назад</button>
-                <button type="submit" className="bg-white">
-                  Потврди
-                </button>
-              </div>
             )}
           </div>
         </div>

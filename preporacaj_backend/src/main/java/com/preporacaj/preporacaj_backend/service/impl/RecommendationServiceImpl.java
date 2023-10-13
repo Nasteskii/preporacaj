@@ -56,13 +56,12 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     @Override
-    public Recommendation editRecommendation(String recommendationId, String title, String recommendationContent, RecommendationCategory recommendationCategory, Status status, String profileId) {
+    public Recommendation editRecommendation(String recommendationId, String title, String recommendationContent, RecommendationCategory recommendationCategory, String profileId) {
         Recommendation oldRecommendation = recommendationRepository.findById(recommendationId).orElseThrow(NoSuchElementException::new);
         Profile profile = profileRepository.findById(profileId).orElseThrow(NoSuchElementException::new);
         oldRecommendation.setTitle(title);
         oldRecommendation.setRecommendationContent(recommendationContent);
         oldRecommendation.setRecommendationCategory(recommendationCategory);
-        oldRecommendation.setStatus(status);
         oldRecommendation.setProfile(profile);
         return recommendationRepository.save(oldRecommendation);
     }

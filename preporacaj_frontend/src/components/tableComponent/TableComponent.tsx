@@ -66,22 +66,25 @@ const customStyles = {
   },
 };
 
-function TableComponent({ recommendations }: RecommendationsList) {
+function TableComponent({ recommendations, fetchData }: RecommendationsList) {
   const location = useLocation();
   const path = location.pathname;
   const [showModal, setShowModal] = useState(false);
   const [modalText, setModalText] = useState("Дали сте сигурни?");
   const [modalInputs, setModalInputs] = useState<string[] | null>(null);
+  const [formAction, setFormAction] = useState("");
 
   const openAddModal = () => {
     setShowModal(true);
     setModalText("Додади препорака");
-    const inputs = ["Име", "Содржина"];
+    setFormAction("addRecommendation");
+    const inputs = ["", ""];
     setModalInputs(inputs);
   };
 
   const closeModal = () => {
     setShowModal(false);
+    fetchData();
   };
 
   const subHeaderComponent = (
@@ -149,6 +152,7 @@ function TableComponent({ recommendations }: RecommendationsList) {
       ),
     },
   ];
+
   let data =
     recommendations && recommendations.length > 0
       ? recommendations.map((recommendation) => ({
@@ -181,6 +185,7 @@ function TableComponent({ recommendations }: RecommendationsList) {
           <ModalComponent
             modalText={modalText}
             modalInputs={modalInputs}
+            action={formAction}
             closeModal={closeModal}
           />
         )}
@@ -202,7 +207,7 @@ function TableComponent({ recommendations }: RecommendationsList) {
     const recommendationId = path.substring(path.lastIndexOf("/") + 1);
 
     return (
-      <div className="w-3/4 m-auto h-full">
+      <div className="w-3/4 m-auto">
         <RecommendationComponent
           recommendationType={recommendationType}
           recommendationId={recommendationId}

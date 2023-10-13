@@ -12,7 +12,7 @@ public interface RecommendationService {
     Page<Recommendation> getByCategory(RecommendationCategory recommendationCategory, Pageable pageable);
     Page<Recommendation> getByProfileId(String profileId, Pageable pageable);
     Recommendation addRecommendation(String title, String recommendationContent, RecommendationCategory recommendationCategory, String profileId);
-    Recommendation editRecommendation(String recommendationId, String title, String recommendationContent, RecommendationCategory recommendationCategory, Status status, String profileId);
+    Recommendation editRecommendation(String recommendationId, String title, String recommendationContent, RecommendationCategory recommendationCategory, String profileId);
     Recommendation removeRecommendation(String recommendationId);
     void changeStatus(String recommendationId, Status status);
     void updateRating(String recommendationId, double newRating);
