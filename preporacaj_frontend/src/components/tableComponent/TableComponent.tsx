@@ -6,112 +6,9 @@ import RecommendationComponent from "../recommendationComponent/RecommendationCo
 import { FiPlus } from "react-icons/fi";
 import { Button } from "@mui/material";
 import ModalComponent from "../modalComponent/ModalComponent";
-import { useState } from "react";
-
-const columns = [
-  {
-    name: "Id",
-    selector: (row: any) => row.id,
-    sortable: true,
-    cell: (row: any) => (
-      <Link
-        to={`${row.id}`}
-        className="no-underline text-black hover:text-purple w-full h-full py-6"
-      >
-        {row.id}
-      </Link>
-    ),
-  },
-  {
-    name: "Title",
-    selector: (row: any) => row.title,
-    sortable: true,
-    cell: (row: any) => (
-      <Link
-        to={`${row.id}`}
-        className="no-underline text-black hover:text-purple w-full h-full py-6"
-      >
-        {row.title}
-      </Link>
-    ),
-  },
-  {
-    name: "Year",
-    selector: (row: any) => row.year,
-    sortable: true,
-    cell: (row: any) => (
-      <Link
-        to={`${row.id}`}
-        className="no-underline text-black hover:text-purple w-full h-full py-6"
-      >
-        {row.year}
-      </Link>
-    ),
-  },
-];
-
-const data = [
-  {
-    id: 1,
-    title: "Beetlejuice",
-    year: "1988",
-  },
-  {
-    id: 2,
-    title: "Ghostbusters",
-    year: "1984",
-  },
-  {
-    id: 3,
-    title: "Beetlejuice",
-    year: "1988",
-  },
-  {
-    id: 4,
-    title: "Ghostbusters",
-    year: "1984",
-  },
-  {
-    id: 5,
-    title: "Beetlejuice",
-    year: "1988",
-  },
-  {
-    id: 6,
-    title: "Ghostbusters",
-    year: "1984",
-  },
-  {
-    id: 7,
-    title: "Beetlejuice",
-    year: "1988",
-  },
-  {
-    id: 8,
-    title: "Ghostbusters",
-    year: "1984",
-  },
-  {
-    id: 9,
-    title: "Beetlejuice",
-    year: "1988",
-  },
-  {
-    id: 10,
-    title: "Ghostbusters",
-    year: "1984",
-  },
-  {
-    id: 11,
-    title: "Beetlejuice",
-    year: "1988",
-  },
-  {
-    id: 12,
-    title: "Ghostbusters",
-    year: "1984",
-  },
-];
+import { useEffect, useState } from "react";
+import { RecommendationsList } from "../../types/RecommendationsList";
+import { Recommendation } from "../../types/Recommendation";
 
 const theme = createTheme({
   components: {
@@ -142,7 +39,7 @@ const customStyles = {
   subHeader: {
     style: {
       background: "#ecebff",
-      justifyContent: "space-between",
+      justifyContent: "align-right",
       marginBottom: "16px",
       padding: "0",
     },
@@ -168,49 +65,139 @@ const customStyles = {
       fontSize: "16px",
     },
   },
+  noData: {
+    style: {
+      background: "#ecebff",
+    },
+  },
 };
 
-function TableComponent() {
+function TableComponent({ recommendations, fetchData }: RecommendationsList) {
   const location = useLocation();
   const path = location.pathname;
   const [showModal, setShowModal] = useState(false);
   const [modalText, setModalText] = useState("Дали сте сигурни?");
   const [modalInputs, setModalInputs] = useState<string[] | null>(null);
+  const [formAction, setFormAction] = useState("");
+  const [data, setData] = useState<any[]>([]);
+  const [searchText, setSearchText] = useState("");
+
+  useEffect(() => {
+    if (recommendations && recommendations.length > 0) {
+      const newData = recommendations.map((item) => ({
+        id: item.id,
+        username: item.profile.username,
+        title: item.title,
+        rating: item.rating,
+      }));
+      setData(newData);
+    }
+  }, [recommendations]);
+
+  const handleSearch = (event: any) => {
+    const searchText = event.target.value;
+    setSearchText(searchText);
+
+    if (recommendations && recommendations.length > 0) {
+      const filteredData = recommendations.filter(
+        (item) =>
+          item.title.toLowerCase().includes(searchText.toLowerCase()) ||
+          item.recommendationContent
+            .toLowerCase()
+            .includes(searchText.toLowerCase())
+      );
+      const newData = filteredData.map((item) => ({
+        id: item.id,
+        username: item.profile.username,
+        title: item.title,
+        rating: item.rating,
+      }));
+      setData(newData);
+    }
+  };
 
   const openAddModal = () => {
     setShowModal(true);
     setModalText("Додади препорака");
-    const inputs = ["Име", "Содржина"];
+    setFormAction("addRecommendation");
+    const inputs = ["", ""];
     setModalInputs(inputs);
   };
 
   const closeModal = () => {
     setShowModal(false);
+    fetchData();
   };
 
   const subHeaderComponent = (
     <ThemeProvider theme={theme}>
-      <Button
-        onClick={() => openAddModal()}
-        children={
-          <FiPlus
-            style={{
-              color: "#800080",
-              width: "30px",
-              height: "30px",
-            }}
-          />
-        }
-        color="secondary"
-      />
+      {path.substring(1) !== "my-recommendations" && (
+        <Button
+          onClick={() => openAddModal()}
+          children={
+            <FiPlus
+              style={{
+                color: "#800080",
+                width: "30px",
+                height: "30px",
+              }}
+            />
+          }
+          color="secondary"
+        />
+      )}
       <TextField
         id="outlined-basic"
         label="Search"
         variant="outlined"
         size="small"
+        value={searchText}
+        onChange={handleSearch}
       />
     </ThemeProvider>
   );
+
+  const columns = [
+    {
+      name: "Title",
+      selector: (row: any) => row.title,
+      sortable: true,
+      cell: (row: any) => (
+        <Link
+          to={`${row.id !== "Нема податоци" ? row.id : ""}`}
+          className="no-underline text-black hover:text-purple w-full h-full py-6"
+        >
+          {row.title}
+        </Link>
+      ),
+    },
+    {
+      name: "Rating",
+      selector: (row: any) => row.rating,
+      sortable: true,
+      cell: (row: any) => (
+        <Link
+          to={`${row.id !== "Нема податоци" ? row.id : ""}`}
+          className="no-underline text-black hover:text-purple w-full h-full py-6"
+        >
+          {row.rating}
+        </Link>
+      ),
+    },
+    {
+      name: "User",
+      selector: (row: any) => row.username,
+      sortable: true,
+      cell: (row: any) => (
+        <Link
+          to={`${row.id !== "Нема податоци" ? row.id : ""}`}
+          className="no-underline text-black hover:text-purple w-full h-full py-6"
+        >
+          {row.username}
+        </Link>
+      ),
+    },
+  ];
 
   const allowedPaths = [
     "/my-recommendations",
@@ -227,11 +214,13 @@ function TableComponent() {
           <ModalComponent
             modalText={modalText}
             modalInputs={modalInputs}
+            action={formAction}
             closeModal={closeModal}
           />
         )}
         <DataTable
-          defaultSortFieldId={1}
+          defaultSortFieldId={2}
+          defaultSortAsc={false}
           pagination
           responsive
           subHeader
@@ -240,6 +229,7 @@ function TableComponent() {
           columns={columns}
           data={data}
           customStyles={customStyles}
+          noDataComponent={<h2 className="text-lg">Нема податоци</h2>}
         />
       </div>
     );
@@ -248,7 +238,7 @@ function TableComponent() {
     const recommendationId = path.substring(path.lastIndexOf("/") + 1);
 
     return (
-      <div className="w-3/4 m-auto h-full">
+      <div className="w-3/4 m-auto">
         <RecommendationComponent
           recommendationType={recommendationType}
           recommendationId={recommendationId}

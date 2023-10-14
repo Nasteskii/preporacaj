@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.NoSuchElementException;
 
 @Service
@@ -56,13 +57,12 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     @Override
-    public Recommendation editRecommendation(String recommendationId, String title, String recommendationContent, RecommendationCategory recommendationCategory, Status status, String profileId) {
+    public Recommendation editRecommendation(String recommendationId, String title, String recommendationContent, RecommendationCategory recommendationCategory, String profileId) {
         Recommendation oldRecommendation = recommendationRepository.findById(recommendationId).orElseThrow(NoSuchElementException::new);
         Profile profile = profileRepository.findById(profileId).orElseThrow(NoSuchElementException::new);
         oldRecommendation.setTitle(title);
         oldRecommendation.setRecommendationContent(recommendationContent);
         oldRecommendation.setRecommendationCategory(recommendationCategory);
-        oldRecommendation.setStatus(status);
         oldRecommendation.setProfile(profile);
         return recommendationRepository.save(oldRecommendation);
     }
@@ -84,7 +84,8 @@ public class RecommendationServiceImpl implements RecommendationService {
     public void updateRating(String recommendationId, double newRating) {
         Recommendation recommendation = recommendationRepository.findById(recommendationId).orElseThrow(NoSuchElementException::new);
         double oldRating = recommendation.getRatings() > 0 ? Double.parseDouble(recommendation.getRating()) : 0;
-        recommendation.setRating(String.valueOf((oldRating * recommendation.getRatings() + newRating) / (recommendation.getRatings() + 1)));
+        recommendation.setRating(String.format("%.2f",(oldRating * recommendation.getRatings() + newRating) / (recommendation.getRatings() + 1)));
         recommendation.setRatings(recommendation.getRatings() + 1);
+        recommendationRepository.save(recommendation);
     }
 }

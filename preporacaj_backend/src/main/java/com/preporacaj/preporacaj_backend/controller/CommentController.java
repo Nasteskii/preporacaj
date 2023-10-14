@@ -16,7 +16,7 @@ import java.util.NoSuchElementException;
 @RestController
 @RequestMapping("api/comments")
 @AllArgsConstructor
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001", "http://localhost:5173", "http://localhost:5174"})
 public class CommentController {
     private final CommentService commentService;
 
@@ -32,12 +32,12 @@ public class CommentController {
     @PostMapping("/{recommendationId}/add")
     public ResponseEntity<Comment> add(@PathVariable String recommendationId,
                                        @RequestParam String profileId,
-                                       @RequestParam String commentContent) {
+                                       @RequestParam String content) {
         try {
             return new ResponseEntity<>(commentService.addComment(
                     profileId,
                     recommendationId,
-                    commentContent),
+                    content),
                     HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -48,13 +48,13 @@ public class CommentController {
     public ResponseEntity<Comment> edit(@PathVariable String recommendationId,
                                         @PathVariable String commentId,
                                         @RequestParam String profileId,
-                                        @RequestParam String commentContent) {
+                                        @RequestParam String content) {
         try {
             return new ResponseEntity<>(commentService.editComment(
                     commentId,
                     profileId,
                     recommendationId,
-                    commentContent),
+                    content),
                     HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);

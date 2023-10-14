@@ -21,6 +21,4 @@ public class Recommendation {
     private Integer ratings;
     @ManyToOne
     private Profile profile;
-
-
 }

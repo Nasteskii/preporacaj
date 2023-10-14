@@ -17,7 +17,7 @@ import java.util.NoSuchElementException;
 @RestController
 @RequestMapping("api/recommendations")
 @AllArgsConstructor
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001", "http://localhost:5173", "http://localhost:5174"})
 public class RecommendationsController {
     private final RecommendationService recommendationService;
 
@@ -36,7 +36,7 @@ public class RecommendationsController {
         }
     }
 
-    @GetMapping("/{recommendationCategory}")
+    @GetMapping("/category/{recommendationCategory}")
     public List<Recommendation> getByCategory(@PathVariable RecommendationCategory recommendationCategory, Pageable pageable) {
         return recommendationService.getByCategory(recommendationCategory, pageable).getContent();
     }
@@ -52,14 +52,14 @@ public class RecommendationsController {
 
     @PostMapping("/add")
     public ResponseEntity<Recommendation> add(@RequestParam String title,
-                                              @RequestParam String recommendationContent,
+                                              @RequestParam String content,
                                               @RequestParam String category,
                                               @RequestParam String profileId) {
         try {
             RecommendationCategory recommendationCategory = RecommendationCategory.valueOf(category.toUpperCase());
             return new ResponseEntity<>(recommendationService.addRecommendation(
                     title,
-                    recommendationContent,
+                    content,
                     recommendationCategory,
                     profileId),
                     HttpStatus.OK);
@@ -71,17 +71,15 @@ public class RecommendationsController {
     @PostMapping("/edit/{recommendationId}")
     public ResponseEntity<Recommendation> edit(@PathVariable String recommendationId,
                                                @RequestParam String title,
-                                               @RequestParam String recommendationContent,
-                                               @RequestParam RecommendationCategory recommendationCategory,
-                                               @RequestParam Status status,
+                                               @RequestParam String content,
+                                               @RequestParam RecommendationCategory category,
                                                @RequestParam String profileId) {
         try {
             return new ResponseEntity<>(recommendationService.editRecommendation(
                     recommendationId,
                     title,
-                    recommendationContent,
-                    recommendationCategory,
-                    status,
+                    content,
+                    category,
                     profileId),
                     HttpStatus.OK);
         } catch (NoSuchElementException e) {
