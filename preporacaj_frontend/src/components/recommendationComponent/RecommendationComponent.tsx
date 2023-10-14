@@ -6,6 +6,7 @@ import { RecommendationMeta } from "../../types/RecommendationMeta";
 import { Recommendation } from "../../types/Recommendation";
 import axios from "axios";
 import { RecommendationComment } from "../../types/RecommendationComment";
+import ReactStars from "react-rating-stars-component";
 
 function RecommendationComponent({
   recommendationType,
@@ -57,22 +58,41 @@ function RecommendationComponent({
       if (commentInput) {
         commentInput.value = "";
       }
-      console.log("Form submitted successfully:", response.data);
     } catch (error) {
       console.error("Error submitting form:", error);
     }
   };
 
-  const openEditModal = (text: string, action: string, commentId?: string) => {
+  const ratingChanged = async (newRating: Int8Array) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:9090/api/recommendations/rating/${recommendationId}/${newRating}`
+      );
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
+
+  const openEditModal = (
+    text: string,
+    action: string,
+    commentId?: string,
+    commentContent?: string
+  ) => {
     setShowModal(true);
     setModalText(text);
     setFormAction(action);
     setCommentId(commentId);
-    if (recommendation) {
-      const inputs = [
-        recommendation.title,
-        recommendation.recommendationContent,
-      ];
+    if (action === "editRecommendation") {
+      if (recommendation) {
+        const inputs = [
+          recommendation.title,
+          recommendation.recommendationContent,
+        ];
+        setModalInputs(inputs);
+      }
+    } else {
+      const inputs = commentContent ? ["", commentContent] : ["", ""];
       setModalInputs(inputs);
     }
   };
@@ -82,6 +102,7 @@ function RecommendationComponent({
     action: string,
     commentId?: string
   ) => {
+    setModalInputs(null);
     setModalText(text);
     setFormAction(action);
     setCommentId(commentId);
@@ -140,6 +161,15 @@ function RecommendationComponent({
             }}
           ></TextField>
         </div>
+        <ReactStars
+          count={5}
+          onChange={ratingChanged}
+          size={36}
+          emptyIcon={<i className="far fa-star"></i>}
+          halfIcon={<i className="fa fa-star-half-alt"></i>}
+          fullIcon={<i className="fa fa-star"></i>}
+          activeColor="#ffd700"
+        />
       </div>
       <div className="mt-12">
         <h2 className="text-purple text-xl mb-4">Коментари</h2>
@@ -168,7 +198,8 @@ function RecommendationComponent({
                         openEditModal(
                           "Промени коментар",
                           "editComment",
-                          comment.id
+                          comment.id,
+                          comment.commentContent
                         )
                       }
                       color="secondary"

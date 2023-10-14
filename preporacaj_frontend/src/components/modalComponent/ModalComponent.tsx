@@ -55,7 +55,6 @@ const ModalComponent = ({
         );
       }
 
-      console.log("Form submitted successfully:", response?.data);
       closeModal();
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -97,7 +96,7 @@ const ModalComponent = ({
                       name="title"
                       placeholder="Име"
                       defaultValue={modalInputs[0]}
-                      autoFocus={false}
+                      autoFocus
                       fullWidth={true}
                       color="secondary"
                       style={{ color: "white" }}
@@ -108,29 +107,31 @@ const ModalComponent = ({
                   name="content"
                   placeholder="Содржина"
                   defaultValue={modalInputs[1]}
-                  autoFocus={false}
+                  autoFocus={
+                    action !== "addRecommendation" &&
+                    action !== "editRecommendation"
+                  }
                   fullWidth={true}
                   color="secondary"
                   multiline={true}
                   style={{ color: "white" }}
                 />
                 <Input name="profileId" value="1" style={{ display: "none" }} />
-                <div className="mt-5 justify-center flex gap-4">
+                <div className="mt-5 justify-center flex flex-row-reverse gap-4">
                   {action === "editRecommendation" ||
-                  action === "deleteRecommendation" ||
                   action === "editComment" ? (
                     <>
-                      <button onClick={closeModal}>Назад</button>
                       <button type="submit" className="bg-white">
                         Потврди
                       </button>
+                      <button onClick={closeModal}>Откажи</button>
                     </>
                   ) : (
                     <>
-                      <button onClick={closeModal}>Откажи</button>
                       <button type="submit" className="bg-white">
                         Додади
                       </button>
+                      <button onClick={closeModal}>Откажи</button>
                     </>
                   )}
                 </div>
@@ -138,8 +139,8 @@ const ModalComponent = ({
             ) : (
               <form onSubmit={handleSubmit}>
                 <div className="mt-5 justify-center flex gap-4">
-                  <button onClick={closeModal}>Назад</button>
-                  <button type="submit" className="bg-white">
+                  <button onClick={closeModal}>Откажи</button>
+                  <button type="submit" className="bg-white" autoFocus>
                     Потврди
                   </button>
                 </div>

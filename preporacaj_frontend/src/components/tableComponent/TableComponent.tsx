@@ -6,8 +6,9 @@ import RecommendationComponent from "../recommendationComponent/RecommendationCo
 import { FiPlus } from "react-icons/fi";
 import { Button } from "@mui/material";
 import ModalComponent from "../modalComponent/ModalComponent";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RecommendationsList } from "../../types/RecommendationsList";
+import { Recommendation } from "../../types/Recommendation";
 
 const theme = createTheme({
   components: {
@@ -38,7 +39,7 @@ const customStyles = {
   subHeader: {
     style: {
       background: "#ecebff",
-      justifyContent: "space-between",
+      justifyContent: "align-right",
       marginBottom: "16px",
       padding: "0",
     },
@@ -64,6 +65,11 @@ const customStyles = {
       fontSize: "16px",
     },
   },
+  noData: {
+    style: {
+      background: "#ecebff",
+    },
+  },
 };
 
 function TableComponent({ recommendations, fetchData }: RecommendationsList) {
@@ -73,6 +79,42 @@ function TableComponent({ recommendations, fetchData }: RecommendationsList) {
   const [modalText, setModalText] = useState("Дали сте сигурни?");
   const [modalInputs, setModalInputs] = useState<string[] | null>(null);
   const [formAction, setFormAction] = useState("");
+  const [data, setData] = useState<any[]>([]);
+  const [searchText, setSearchText] = useState("");
+
+  useEffect(() => {
+    if (recommendations && recommendations.length > 0) {
+      const newData = recommendations.map((item) => ({
+        id: item.id,
+        username: item.profile.username,
+        title: item.title,
+        rating: item.rating,
+      }));
+      setData(newData);
+    }
+  }, [recommendations]);
+
+  const handleSearch = (event: any) => {
+    const searchText = event.target.value;
+    setSearchText(searchText);
+
+    if (recommendations && recommendations.length > 0) {
+      const filteredData = recommendations.filter(
+        (item) =>
+          item.title.toLowerCase().includes(searchText.toLowerCase()) ||
+          item.recommendationContent
+            .toLowerCase()
+            .includes(searchText.toLowerCase())
+      );
+      const newData = filteredData.map((item) => ({
+        id: item.id,
+        username: item.profile.username,
+        title: item.title,
+        rating: item.rating,
+      }));
+      setData(newData);
+    }
+  };
 
   const openAddModal = () => {
     setShowModal(true);
@@ -89,24 +131,28 @@ function TableComponent({ recommendations, fetchData }: RecommendationsList) {
 
   const subHeaderComponent = (
     <ThemeProvider theme={theme}>
-      <Button
-        onClick={() => openAddModal()}
-        children={
-          <FiPlus
-            style={{
-              color: "#800080",
-              width: "30px",
-              height: "30px",
-            }}
-          />
-        }
-        color="secondary"
-      />
+      {path.substring(1) !== "my-recommendations" && (
+        <Button
+          onClick={() => openAddModal()}
+          children={
+            <FiPlus
+              style={{
+                color: "#800080",
+                width: "30px",
+                height: "30px",
+              }}
+            />
+          }
+          color="secondary"
+        />
+      )}
       <TextField
         id="outlined-basic"
         label="Search"
         variant="outlined"
         size="small"
+        value={searchText}
+        onChange={handleSearch}
       />
     </ThemeProvider>
   );
@@ -153,23 +199,6 @@ function TableComponent({ recommendations, fetchData }: RecommendationsList) {
     },
   ];
 
-  let data =
-    recommendations && recommendations.length > 0
-      ? recommendations.map((recommendation) => ({
-          id: recommendation.id,
-          username: recommendation.profile.username,
-          title: recommendation.title,
-          rating: recommendation.rating,
-        }))
-      : [
-          {
-            id: "Нема податоци",
-            username: "Нема податоци",
-            title: "Нема податоци",
-            rating: "Нема податоци",
-          },
-        ];
-
   const allowedPaths = [
     "/my-recommendations",
     "/vehicles",
@@ -190,7 +219,8 @@ function TableComponent({ recommendations, fetchData }: RecommendationsList) {
           />
         )}
         <DataTable
-          defaultSortFieldId={1}
+          defaultSortFieldId={2}
+          defaultSortAsc={false}
           pagination
           responsive
           subHeader
@@ -199,6 +229,7 @@ function TableComponent({ recommendations, fetchData }: RecommendationsList) {
           columns={columns}
           data={data}
           customStyles={customStyles}
+          noDataComponent={<h2 className="text-lg">Нема податоци</h2>}
         />
       </div>
     );
