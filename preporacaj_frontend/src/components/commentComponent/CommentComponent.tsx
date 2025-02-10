@@ -20,8 +20,8 @@ function CommentComponent({
         name="content"
         className="bg-gray-light"
         value={recommendationComment?.commentContent}
-        fullWidth={true}
-        multiline={true}
+        fullWidth
+        multiline
         color="secondary"
         disabled={disabled}
         inputProps={{

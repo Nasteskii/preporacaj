@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Input, TextField, TextareaAutosize } from "@mui/material";
+import { Button, Input, TextField } from "@mui/material";
 import CommentComponent from "../commentComponent/CommentComponent";
 import ModalComponent from "../modalComponent/ModalComponent";
 import { RecommendationMeta } from "../../types/RecommendationMeta";
@@ -9,7 +9,7 @@ import { RecommendationComment } from "../../types/RecommendationComment";
 import ReactStars from "react-rating-stars-component";
 
 function RecommendationComponent({
-  recommendationType,
+  // recommendationType,
   recommendationId,
 }: RecommendationMeta) {
   const [showModal, setShowModal] = useState(false);
@@ -46,18 +46,17 @@ function RecommendationComponent({
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
-    const formData = new FormData(event.target);
+    const commentDTO = {
+      profileId: event.target.profileId.value,
+      content: event.target.content.value,
+    };
     try {
-      const response = await axios.post(
+      await axios.post(
         `http://localhost:9090/api/comments/${recommendationId}/add`,
-        formData
-      );
+        commentDTO
+      ).then(fetchData);
 
-      fetchData();
-      const commentInput = document.getElementById("commentInput");
-      if (commentInput) {
-        commentInput.value = "";
-      }
+      event.target.content.value = "";
     } catch (error) {
       console.error("Error submitting form:", error);
     }
@@ -65,7 +64,7 @@ function RecommendationComponent({
 
   const ratingChanged = async (newRating: Int8Array) => {
     try {
-      const response = await axios.get(
+      await axios.get(
         `http://localhost:9090/api/recommendations/rating/${recommendationId}/${newRating}`
       );
     } catch (error) {
@@ -149,9 +148,9 @@ function RecommendationComponent({
           <TextField
             className="bg-gray-light"
             value={recommendation?.recommendationContent}
-            disabled={true}
-            fullWidth={true}
-            multiline={true}
+            disabled
+            fullWidth
+            multiline
             color="secondary"
             inputProps={{
               style: {
@@ -183,8 +182,8 @@ function RecommendationComponent({
         </form>
         <div className="mt-12">
           {comments && comments.length > 0
-            ? comments.map((comment) => (
-                <div className="flex space-between">
+            ? comments.map((comment, index) => (
+                <div key={index} className="flex space-between">
                   <div className="w-full">
                     <CommentComponent
                       key={comment.id}
