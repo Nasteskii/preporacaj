@@ -8,7 +8,6 @@ import { Button } from "@mui/material";
 import ModalComponent from "../modalComponent/ModalComponent";
 import { useEffect, useState } from "react";
 import { RecommendationsList } from "../../types/RecommendationsList";
-import { Recommendation } from "../../types/Recommendation";
 
 const theme = createTheme({
   components: {

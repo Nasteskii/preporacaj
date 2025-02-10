@@ -1,6 +1,7 @@
 package com.preporacaj.preporacaj_backend.controller;
 
 import com.preporacaj.preporacaj_backend.model.Recommendation;
+import com.preporacaj.preporacaj_backend.model.dto.RecommendationDto;
 import com.preporacaj.preporacaj_backend.model.enumeration.RecommendationCategory;
 import com.preporacaj.preporacaj_backend.model.enumeration.Status;
 import com.preporacaj.preporacaj_backend.service.RecommendationService;
@@ -51,17 +52,10 @@ public class RecommendationsController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Recommendation> add(@RequestParam String title,
-                                              @RequestParam String content,
-                                              @RequestParam String category,
-                                              @RequestParam String profileId) {
+    public ResponseEntity<Recommendation> add(@RequestBody RecommendationDto recommendationDto) {
         try {
-            RecommendationCategory recommendationCategory = RecommendationCategory.valueOf(category.toUpperCase());
             return new ResponseEntity<>(recommendationService.addRecommendation(
-                    title,
-                    content,
-                    recommendationCategory,
-                    profileId),
+                    recommendationDto),
                     HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -70,17 +64,11 @@ public class RecommendationsController {
 
     @PostMapping("/edit/{recommendationId}")
     public ResponseEntity<Recommendation> edit(@PathVariable String recommendationId,
-                                               @RequestParam String title,
-                                               @RequestParam String content,
-                                               @RequestParam RecommendationCategory category,
-                                               @RequestParam String profileId) {
+                                               @RequestBody RecommendationDto recommendationDto) {
         try {
             return new ResponseEntity<>(recommendationService.editRecommendation(
                     recommendationId,
-                    title,
-                    content,
-                    category,
-                    profileId),
+                    recommendationDto),
                     HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);

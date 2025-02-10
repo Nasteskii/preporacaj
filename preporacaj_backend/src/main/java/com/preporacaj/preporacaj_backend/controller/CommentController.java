@@ -2,6 +2,7 @@ package com.preporacaj.preporacaj_backend.controller;
 
 
 import com.preporacaj.preporacaj_backend.model.Comment;
+import com.preporacaj.preporacaj_backend.model.dto.CommentDto;
 import com.preporacaj.preporacaj_backend.service.CommentService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -31,13 +32,11 @@ public class CommentController {
 
     @PostMapping("/{recommendationId}/add")
     public ResponseEntity<Comment> add(@PathVariable String recommendationId,
-                                       @RequestParam String profileId,
-                                       @RequestParam String content) {
+                                       @RequestBody CommentDto commentDto) {
         try {
             return new ResponseEntity<>(commentService.addComment(
-                    profileId,
                     recommendationId,
-                    content),
+                    commentDto),
                     HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -47,14 +46,12 @@ public class CommentController {
     @PostMapping("/{recommendationId}/edit/{commentId}")
     public ResponseEntity<Comment> edit(@PathVariable String recommendationId,
                                         @PathVariable String commentId,
-                                        @RequestParam String profileId,
-                                        @RequestParam String content) {
+                                        @RequestBody CommentDto commentDto) {
         try {
             return new ResponseEntity<>(commentService.editComment(
                     commentId,
-                    profileId,
                     recommendationId,
-                    content),
+                    commentDto),
                     HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);

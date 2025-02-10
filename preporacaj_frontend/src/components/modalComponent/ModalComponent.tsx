@@ -20,37 +20,45 @@ const ModalComponent = ({
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
-    const formData = new FormData(event.target);
+    const recommendationDTO = {
+      title: event.target.title?.value,
+      content: event.target.content?.value,
+      category: event.target.category?.value,
+      profileId: event.target.profileId?.value,
+    };
+    const commentDTO = {
+      profileId: event.target.profileId?.value,
+      content: event.target.content?.value,
+    };
     try {
-      let response;
       if (action === "addRecommendation") {
-        response = await axios.post(
+        await axios.post(
           "http://localhost:9090/api/recommendations/add",
-          formData
+          recommendationDTO
         );
       } else if (action === "editRecommendation") {
-        response = await axios.post(
+        await axios.post(
           `http://localhost:9090/api/recommendations/edit/${path.substring(
             path.lastIndexOf("/") + 1
           )}`,
-          formData
+          recommendationDTO
         );
       } else if (action === "deleteRecommendation") {
-        response = await axios.delete(
+        await axios.delete(
           `http://localhost:9090/api/recommendations/delete/${path.substring(
             path.lastIndexOf("/") + 1
           )}`
         );
         history.go(-1);
       } else if (action === "editComment") {
-        response = await axios.post(
+        await axios.post(
           `http://localhost:9090/api/comments/${path.substring(
             path.lastIndexOf("/") + 1
           )}/edit/${commentId}`,
-          formData
+          commentDTO
         );
       } else if (action === "deleteComment") {
-        response = await axios.delete(
+        await axios.delete(
           `http://localhost:9090/api/comments/delete/${commentId}`
         );
       }
@@ -113,7 +121,7 @@ const ModalComponent = ({
                   }
                   fullWidth={true}
                   color="secondary"
-                  multiline={true}
+                  multiline
                   style={{ color: "white" }}
                 />
                 <Input name="profileId" value="1" style={{ display: "none" }} />
