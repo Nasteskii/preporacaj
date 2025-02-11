@@ -36,25 +36,23 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Comment addComment(String recommendationId, CommentDto commentDto) {
         Comment newComment = new Comment();
-        Profile profile = profileRepository.findById(commentDto.getProfileId()).orElseThrow(NoSuchElementException::new);
-        Recommendation recommendation = recommendationRepository.findById(recommendationId).orElseThrow(NoSuchElementException::new);
-
-        newComment.setProfile(profile);
-        newComment.setRecommendation(recommendation);
-        newComment.setCommentContent(commentDto.getContent());
-        return commentRepository.save(newComment);
+        return saveComment(recommendationId, commentDto, newComment);
     }
 
     @Override
     public Comment editComment(String commentId, String recommendationId, CommentDto commentDto) {
         Comment oldComment = commentRepository.findById(commentId).orElseThrow(NoSuchElementException::new);
+        return saveComment(recommendationId, commentDto, oldComment);
+    }
+
+    private Comment saveComment(String recommendationId, CommentDto commentDto, Comment comment) {
         Profile profile = profileRepository.findById(commentDto.getProfileId()).orElseThrow(NoSuchElementException::new);
         Recommendation recommendation = recommendationRepository.findById(recommendationId).orElseThrow(NoSuchElementException::new);
 
-        oldComment.setProfile(profile);
-        oldComment.setRecommendation(recommendation);
-        oldComment.setCommentContent(commentDto.getContent());
-        return commentRepository.save(oldComment);
+        comment.setProfile(profile);
+        comment.setRecommendation(recommendation);
+        comment.setCommentContent(commentDto.getContent());
+        return commentRepository.save(comment);
     }
 
     @Override

@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -15,13 +16,13 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("api/comments")
+@RequestMapping("/api/comments")
 @AllArgsConstructor
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001", "http://localhost:5173", "http://localhost:5174"})
 public class CommentController {
     private final CommentService commentService;
 
-    @GetMapping("/{recommendationId}")
+    @GetMapping("/public/{recommendationId}")
     public List<Comment> getByRecommendationId(@PathVariable String recommendationId, Pageable pageable) {
         try {
             return commentService.getByRecommendationId(recommendationId, pageable).getContent();

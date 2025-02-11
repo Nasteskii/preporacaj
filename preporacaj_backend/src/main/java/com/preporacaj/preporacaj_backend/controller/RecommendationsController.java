@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("api/recommendations")
+@RequestMapping("/api/recommendations")
 @AllArgsConstructor
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001", "http://localhost:5173", "http://localhost:5174"})
 public class RecommendationsController {
@@ -27,7 +28,7 @@ public class RecommendationsController {
         return recommendationService.getAll(pageable).getContent();
     }
 
-    @GetMapping("/{recommendationId}")
+    @GetMapping("/public/{recommendationId}")
     public ResponseEntity<Recommendation> getById(@PathVariable String recommendationId) {
         try {
             return new ResponseEntity<>(recommendationService.getByRecommendationId(recommendationId),
@@ -37,12 +38,12 @@ public class RecommendationsController {
         }
     }
 
-    @GetMapping("/category/{recommendationCategory}")
+    @GetMapping("/public/category/{recommendationCategory}")
     public List<Recommendation> getByCategory(@PathVariable RecommendationCategory recommendationCategory, Pageable pageable) {
         return recommendationService.getByCategory(recommendationCategory, pageable).getContent();
     }
 
-    @GetMapping("/profile/{profileId}")
+    @GetMapping("/public/profile/{profileId}")
     public List<Recommendation> getByProfileId(@PathVariable String profileId, Pageable pageable) {
         try {
             return recommendationService.getByProfileId(profileId, pageable).getContent();
@@ -86,7 +87,8 @@ public class RecommendationsController {
         }
     }
 
-    @GetMapping("status/{recommendationId}/{status}")
+    @PreAuthorize("hasRole('SUPERUSER')")
+    @GetMapping("/status/{recommendationId}/{status}")
     public ResponseEntity<String> changeStatus(@PathVariable String recommendationId, @PathVariable Status status) {
         try {
             recommendationService.changeStatus(recommendationId, status);
@@ -96,7 +98,7 @@ public class RecommendationsController {
         }
     }
 
-    @GetMapping("rating/{recommendationId}/{rating}")
+    @GetMapping("/public/rating/{recommendationId}/{rating}")
     public ResponseEntity<String> updateRating(@PathVariable String recommendationId, @PathVariable double rating) {
         try {
             recommendationService.updateRating(recommendationId, rating);
