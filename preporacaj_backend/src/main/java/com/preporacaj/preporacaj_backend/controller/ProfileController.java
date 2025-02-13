@@ -2,6 +2,7 @@ package com.preporacaj.preporacaj_backend.controller;
 
 import com.preporacaj.preporacaj_backend.model.Profile;
 import com.preporacaj.preporacaj_backend.service.ProfileService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -12,17 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@RequestMapping("/api/profiles")
 @RestController
+@RequestMapping("/api/profiles")
+@AllArgsConstructor
 public class ProfileController {
     private final ProfileService profileService;
 
-    public ProfileController(ProfileService profileService) {
-        this.profileService = profileService;
-    }
-
     @PreAuthorize("hasRole('SUPERUSER')")
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<Profile>> allProfiles() {
         List<Profile> profiles = profileService.allProfiles();
 
@@ -32,7 +30,6 @@ public class ProfileController {
     @GetMapping("/me")
     public ResponseEntity<Profile> authenticatedProfile() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
         Profile currentProfile = (Profile) authentication.getPrincipal();
 
         return ResponseEntity.ok(currentProfile);
