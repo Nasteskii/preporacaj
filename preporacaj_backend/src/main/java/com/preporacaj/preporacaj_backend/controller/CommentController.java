@@ -15,13 +15,12 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("api/comments")
+@RequestMapping("/api/comments")
 @AllArgsConstructor
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001", "http://localhost:5173", "http://localhost:5174"})
 public class CommentController {
     private final CommentService commentService;
 
-    @GetMapping("/{recommendationId}")
+    @GetMapping("/public/{recommendationId}")
     public List<Comment> getByRecommendationId(@PathVariable String recommendationId, Pageable pageable) {
         try {
             return commentService.getByRecommendationId(recommendationId, pageable).getContent();
