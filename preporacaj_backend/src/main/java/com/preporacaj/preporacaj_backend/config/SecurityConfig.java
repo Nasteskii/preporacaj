@@ -39,8 +39,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .dispatcherTypeMatchers(FORWARD, ERROR).permitAll()
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/api/recommendations/public/**", "/api/comments/public/**").permitAll()
                         .requestMatchers("/api/**").authenticated()
-                        .requestMatchers("/api/**/public/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
