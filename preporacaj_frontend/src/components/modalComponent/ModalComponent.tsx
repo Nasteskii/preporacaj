@@ -5,14 +5,16 @@ import { useLocation } from "react-router-dom";
 const ModalComponent = ({
   modalText,
   modalInputs,
-  closeModal,
+  cancel,
+  confirm,
   action,
   commentId,
 }: {
   modalText: string;
   modalInputs?: string[] | null;
-  closeModal: any;
-  action: string;
+  cancel: any;
+  confirm: any;
+  action?: string;
   commentId?: string;
 }) => {
   const location = useLocation();
@@ -34,36 +36,35 @@ const ModalComponent = ({
       if (action === "addRecommendation") {
         await axios.post(
           "http://localhost:9090/api/recommendations/add",
-          recommendationDTO
+          recommendationDTO,
         );
       } else if (action === "editRecommendation") {
         await axios.post(
           `http://localhost:9090/api/recommendations/edit/${path.substring(
-            path.lastIndexOf("/") + 1
+            path.lastIndexOf("/") + 1,
           )}`,
-          recommendationDTO
+          recommendationDTO,
         );
       } else if (action === "deleteRecommendation") {
         await axios.delete(
           `http://localhost:9090/api/recommendations/delete/${path.substring(
-            path.lastIndexOf("/") + 1
-          )}`
+            path.lastIndexOf("/") + 1,
+          )}`,
         );
         history.go(-1);
       } else if (action === "editComment") {
         await axios.post(
           `http://localhost:9090/api/comments/${path.substring(
-            path.lastIndexOf("/") + 1
+            path.lastIndexOf("/") + 1,
           )}/edit/${commentId}`,
-          commentDTO
+          commentDTO,
         );
       } else if (action === "deleteComment") {
         await axios.delete(
-          `http://localhost:9090/api/comments/delete/${commentId}`
+          `http://localhost:9090/api/comments/delete/${commentId}`,
         );
       }
-
-      closeModal();
+      cancel();
     } catch (error) {
       console.error("Error submitting form:", error);
     }
@@ -132,14 +133,14 @@ const ModalComponent = ({
                       <button type="submit" className="bg-white">
                         Потврди
                       </button>
-                      <button onClick={closeModal}>Откажи</button>
+                      <button onClick={cancel}>Откажи</button>
                     </>
                   ) : (
                     <>
                       <button type="submit" className="bg-white">
                         Додади
                       </button>
-                      <button onClick={closeModal}>Откажи</button>
+                      <button onClick={cancel}>Откажи</button>
                     </>
                   )}
                 </div>
@@ -147,8 +148,13 @@ const ModalComponent = ({
             ) : (
               <form onSubmit={handleSubmit}>
                 <div className="mt-5 justify-center flex gap-4">
-                  <button onClick={closeModal}>Откажи</button>
-                  <button type="submit" className="bg-white" autoFocus>
+                  <button onClick={cancel}>Откажи</button>
+                  <button
+                    onClick={confirm}
+                    type="submit"
+                    className="bg-white"
+                    autoFocus
+                  >
                     Потврди
                   </button>
                 </div>
