@@ -1,17 +1,17 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, Route, Routes, useLocation } from "react-router-dom";
 
-import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
+import { Menu, MenuItem, Sidebar } from "react-pro-sidebar";
 
 import {
-  FiHome,
-  FiHeart,
-  FiBookOpen,
-  FiLogOut,
   FiArrowLeftCircle,
   FiArrowRightCircle,
+  FiBookOpen,
+  FiHeart,
+  FiHome,
+  FiLogOut,
 } from "react-icons/fi";
-import { RiPencilLine, RiCarLine } from "react-icons/ri";
+import { RiCarLine } from "react-icons/ri";
 import { MdMicrowave, MdOutlineDesktopWindows } from "react-icons/md";
 
 import "./SideMenuComponent.css";
@@ -22,6 +22,7 @@ import HomeAppliances from "../../paths/homeAppliances/homeAppliances";
 import Books from "../../paths/books/books";
 import IT from "../../paths/it/it";
 import ModalComponent from "../modalComponent/ModalComponent";
+import AuthService from "../../services/auth.service";
 
 function SideMenuComponent() {
   const [menuCollapse, setMenuCollapse] = useState(false);
@@ -52,7 +53,7 @@ function SideMenuComponent() {
   };
 
   const logOut = () => {
-    setShowModal(true);
+    AuthService.logout();
   };
 
   const closeModal = () => {
@@ -142,7 +143,7 @@ function SideMenuComponent() {
               ИТ и компјутери
             </MenuItem>
             <div className="mt-56">
-              <MenuItem icon={<FiLogOut />} onClick={() => logOut()}>
+              <MenuItem icon={<FiLogOut />} onClick={() => setShowModal(true)}>
                 Одјави се
               </MenuItem>
             </div>
@@ -151,7 +152,8 @@ function SideMenuComponent() {
         {showModal && (
           <ModalComponent
             modalText="Дали сте сигурни?"
-            closeModal={closeModal}
+            cancel={closeModal}
+            confirm={logOut}
           />
         )}
       </div>
@@ -162,7 +164,6 @@ function SideMenuComponent() {
         <Route path="/home-appliances/*" element={<HomeAppliances />} />
         <Route path="/books/*" element={<Books />} />
         <Route path="/IT/*" element={<IT />} />
-        <Route path="/logout" />
       </Routes>
     </div>
   );

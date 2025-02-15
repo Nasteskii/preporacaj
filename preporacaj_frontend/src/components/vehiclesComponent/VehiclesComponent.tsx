@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import TableComponent from "../tableComponent/TableComponent";
-import axios from "axios";
 import { Recommendation } from "../../types/Recommendation";
+import apiRequestService from "../../services/apiRequest.service";
 
 function VehiclesComponent() {
   const [recommendations, setRecommendations] = useState<
@@ -10,8 +10,8 @@ function VehiclesComponent() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:9090/api/recommendations/category/VEHICLES"
+      const response = await apiRequestService.get(
+        "/api/recommendations/public/category/VEHICLES",
       );
       setRecommendations(response.data);
     } catch (error) {

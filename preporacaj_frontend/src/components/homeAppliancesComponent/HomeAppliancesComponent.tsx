@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import TableComponent from "../tableComponent/TableComponent";
 import { Recommendation } from "../../types/Recommendation";
-import axios from "axios";
+import apiRequestService from "../../services/apiRequest.service";
 
 function HomeAppliancesComponent() {
   const [recommendations, setRecommendations] = useState<
@@ -10,8 +10,8 @@ function HomeAppliancesComponent() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:9090/api/recommendations/category/HOME"
+      const response = await apiRequestService.get(
+        "/api/recommendations/public/category/HOME",
       );
       setRecommendations(response.data);
     } catch (error) {
