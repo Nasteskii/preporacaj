@@ -5,7 +5,6 @@ import com.preporacaj.preporacaj_backend.repository.ProfileRepository;
 import com.preporacaj.preporacaj_backend.service.ProfileService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,6 +16,6 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     public List<Profile> allProfiles() {
-        return new ArrayList<>(profileRepository.findAll());
+        return profileRepository.findAll();
     }
 }
