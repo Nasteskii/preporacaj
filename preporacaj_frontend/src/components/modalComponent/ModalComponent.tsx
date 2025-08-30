@@ -1,6 +1,12 @@
 import { Input } from "@mui/material";
-import axios from "axios";
 import { useLocation } from "react-router-dom";
+import {
+  addRecommendation,
+  deleteRecommendation,
+  editRecommendation,
+} from "../../services/recommendations.service";
+import { deleteComment, editComment } from "../../services/comments.service";
+import { useAuth } from "../../context/AuthContext";
 
 const ModalComponent = ({
   modalText,
@@ -13,12 +19,13 @@ const ModalComponent = ({
   modalText: string;
   modalInputs?: string[] | null;
   cancel: any;
-  confirm: any;
+  confirm?: any;
   action?: string;
   commentId?: string;
 }) => {
   const location = useLocation();
   const path = location.pathname;
+  const { profile } = useAuth();
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
@@ -26,58 +33,43 @@ const ModalComponent = ({
       title: event.target.title?.value,
       content: event.target.content?.value,
       category: event.target.category?.value,
-      profileId: event.target.profileId?.value,
+      profileId: profile?.id,
     };
     const commentDTO = {
-      profileId: event.target.profileId?.value,
+      profileId: profile?.id,
       content: event.target.content?.value,
     };
-    try {
-      if (action === "addRecommendation") {
-        await axios.post(
-          "http://localhost:9090/api/recommendations/add",
-          recommendationDTO,
-        );
-      } else if (action === "editRecommendation") {
-        await axios.post(
-          `http://localhost:9090/api/recommendations/edit/${path.substring(
-            path.lastIndexOf("/") + 1,
-          )}`,
-          recommendationDTO,
-        );
-      } else if (action === "deleteRecommendation") {
-        await axios.delete(
-          `http://localhost:9090/api/recommendations/delete/${path.substring(
-            path.lastIndexOf("/") + 1,
-          )}`,
-        );
-        history.go(-1);
-      } else if (action === "editComment") {
-        await axios.post(
-          `http://localhost:9090/api/comments/${path.substring(
-            path.lastIndexOf("/") + 1,
-          )}/edit/${commentId}`,
-          commentDTO,
-        );
-      } else if (action === "deleteComment") {
-        await axios.delete(
-          `http://localhost:9090/api/comments/delete/${commentId}`,
-        );
-      }
-      cancel();
-    } catch (error) {
-      console.error("Error submitting form:", error);
+
+    if (action === "addRecommendation") {
+      await addRecommendation(recommendationDTO);
+    } else if (action === "editRecommendation") {
+      await editRecommendation(
+        path.substring(path.lastIndexOf("/") + 1),
+        recommendationDTO,
+      );
+    } else if (action === "deleteRecommendation") {
+      await deleteRecommendation(path.substring(path.lastIndexOf("/") + 1));
+      window.location.href = path.substring(0, path.lastIndexOf("/"));
+    } else if (action === "editComment") {
+      await editComment(
+        path.substring(path.lastIndexOf("/") + 1),
+        commentDTO,
+        commentId,
+      );
+    } else if (action === "deleteComment") {
+      await deleteComment(commentId);
     }
+    cancel();
   };
 
   const handleRecommendationInputs = () => {
-    if (path.substring(1) === "vehicles") {
+    if (path.substring(1).includes("vehicles")) {
       return (
         <Input name="category" value="VEHICLES" style={{ display: "none" }} />
       );
-    } else if (path.substring(1) === "home-appliances") {
+    } else if (path.substring(1).includes("home-appliances")) {
       return <Input name="category" value="HOME" style={{ display: "none" }} />;
-    } else if (path.substring(1) === "books") {
+    } else if (path.substring(1).includes("books")) {
       return (
         <Input name="category" value="BOOKS" style={{ display: "none" }} />
       );
@@ -125,7 +117,6 @@ const ModalComponent = ({
                   multiline
                   style={{ color: "white" }}
                 />
-                <Input name="profileId" value="1" style={{ display: "none" }} />
                 <div className="mt-5 justify-center flex flex-row-reverse gap-4">
                   {action === "editRecommendation" ||
                   action === "editComment" ? (

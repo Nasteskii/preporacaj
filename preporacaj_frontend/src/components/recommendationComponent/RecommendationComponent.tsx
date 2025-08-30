@@ -1,43 +1,43 @@
 import { useEffect, useState } from "react";
-import { Button, Input, TextField } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import CommentComponent from "../commentComponent/CommentComponent";
 import ModalComponent from "../modalComponent/ModalComponent";
 import { RecommendationMeta } from "../../types/RecommendationMeta";
 import { Recommendation } from "../../types/Recommendation";
-import axios from "axios";
 import { RecommendationComment } from "../../types/RecommendationComment";
 import ReactStars from "react-rating-stars-component";
+import {
+  changeRating,
+  fetchRecommendationById,
+} from "../../services/recommendations.service";
+import {
+  addComment,
+  fetchCommentsByRecommendationId,
+} from "../../services/comments.service";
+import { useAuth } from "../../context/AuthContext";
 
-function RecommendationComponent({
-  // recommendationType,
-  recommendationId,
-}: RecommendationMeta) {
+function RecommendationComponent({ recommendationId }: RecommendationMeta) {
+  const { profile } = useAuth();
   const [showModal, setShowModal] = useState(false);
   const [modalText, setModalText] = useState("Дали сте сигурни?");
   const [modalInputs, setModalInputs] = useState<string[] | null>(null);
   const [recommendation, setRecommendation] = useState<Recommendation | null>(
-    null
+    null,
   );
   const [comments, setComments] = useState<RecommendationComment[] | null>(
-    null
+    null,
   );
   const [formAction, setFormAction] = useState("");
   const [commentId, setCommentId] = useState<string | undefined>();
 
-  const fetchData = async () => {
-    try {
-      const recommendationResponse = await axios.get(
-        `http://localhost:9090/api/recommendations/${recommendationId}`
-      );
-      setRecommendation(recommendationResponse.data);
+  const fetchData = () => {
+    fetchRecommendationById(recommendationId).then((response) =>
+      setRecommendation(response?.data),
+    );
 
-      const commentsResponse = await axios.get(
-        `http://localhost:9090/api/comments/${recommendationId}`
-      );
-      setComments(commentsResponse.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
+    fetchCommentsByRecommendationId(recommendationId).then((response) =>
+      setComments(response?.data),
+    );
   };
 
   useEffect(() => {
@@ -47,36 +47,23 @@ function RecommendationComponent({
   const handleSubmit = async (event: any) => {
     event.preventDefault();
     const commentDTO = {
-      profileId: event.target.profileId.value,
+      profileId: profile?.id,
       content: event.target.content.value,
     };
-    try {
-      await axios.post(
-        `http://localhost:9090/api/comments/${recommendationId}/add`,
-        commentDTO
-      ).then(fetchData);
-
-      event.target.content.value = "";
-    } catch (error) {
-      console.error("Error submitting form:", error);
-    }
+    await addComment(recommendationId, commentDTO);
+    fetchData();
+    event.target.content.value = "";
   };
 
   const ratingChanged = async (newRating: Int8Array) => {
-    try {
-      await axios.get(
-        `http://localhost:9090/api/recommendations/rating/${recommendationId}/${newRating}`
-      );
-    } catch (error) {
-      console.error("Error submitting form:", error);
-    }
+    await changeRating(recommendationId, newRating);
   };
 
   const openEditModal = (
     text: string,
     action: string,
     commentId?: string,
-    commentContent?: string
+    commentContent?: string,
   ) => {
     setShowModal(true);
     setModalText(text);
@@ -99,7 +86,7 @@ function RecommendationComponent({
   const openDeleteModal = (
     text: string,
     action: string,
-    commentId?: string
+    commentId?: string,
   ) => {
     setModalInputs(null);
     setModalText(text);
@@ -119,7 +106,7 @@ function RecommendationComponent({
         <ModalComponent
           modalText={modalText}
           modalInputs={modalInputs}
-          closeModal={closeModal}
+          cancel={closeModal}
           action={formAction}
           commentId={commentId}
         />
@@ -175,7 +162,6 @@ function RecommendationComponent({
         <form onSubmit={handleSubmit}>
           <h2 className="text-purple text-md">Напиши коментар</h2>
           <CommentComponent disabled={false} />
-          <Input name="profileId" value="1" style={{ display: "none" }} />
           <button type="submit" className="bg-purple text-white">
             Коментирај
           </button>
@@ -198,7 +184,7 @@ function RecommendationComponent({
                           "Промени коментар",
                           "editComment",
                           comment.id,
-                          comment.commentContent
+                          comment.commentContent,
                         )
                       }
                       color="secondary"
@@ -210,7 +196,7 @@ function RecommendationComponent({
                         openDeleteModal(
                           "Избриши коментар",
                           "deleteComment",
-                          comment.id
+                          comment.id,
                         )
                       }
                       color="secondary"

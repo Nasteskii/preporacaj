@@ -1,22 +1,17 @@
 import { useEffect, useState } from "react";
 import TableComponent from "../tableComponent/TableComponent";
 import { Recommendation } from "../../types/Recommendation";
-import apiRequestService from "../../services/apiRequest.service";
+import { fetchRecommendationsByCategory } from "../../services/recommendations.service";
 
 function BooksComponent() {
   const [recommendations, setRecommendations] = useState<
     Recommendation[] | null
   >(null);
 
-  const fetchData = async () => {
-    try {
-      const response = await apiRequestService.get(
-        "/api/recommendations/public/category/BOOKS",
-      );
-      setRecommendations(response.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
+  const fetchData = () => {
+    fetchRecommendationsByCategory("BOOKS").then((response) =>
+      setRecommendations(response?.data),
+    );
   };
 
   useEffect(() => {

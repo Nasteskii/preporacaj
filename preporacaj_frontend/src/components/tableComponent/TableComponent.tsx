@@ -1,6 +1,6 @@
 import DataTable from "react-data-table-component";
 import TextField from "@mui/material/TextField";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Link, useLocation } from "react-router-dom";
 import RecommendationComponent from "../recommendationComponent/RecommendationComponent";
 import { FiPlus } from "react-icons/fi";
@@ -85,9 +85,9 @@ function TableComponent({ recommendations, fetchData }: RecommendationsList) {
     if (recommendations && recommendations.length > 0) {
       const newData = recommendations.map((item) => ({
         id: item.id,
-        username: item.profile.username,
+        email: item.profile.email,
         title: item.title,
-        rating: item.rating,
+        rating: item.rating === 0 ? "Нема рејтинг" : item.rating,
       }));
       setData(newData);
     }
@@ -103,11 +103,12 @@ function TableComponent({ recommendations, fetchData }: RecommendationsList) {
           item.title.toLowerCase().includes(searchText.toLowerCase()) ||
           item.recommendationContent
             .toLowerCase()
-            .includes(searchText.toLowerCase())
+            .includes(searchText.toLowerCase()) ||
+          item.profile.email.toLowerCase().includes(searchText.toLowerCase()),
       );
       const newData = filteredData.map((item) => ({
         id: item.id,
-        username: item.profile.username,
+        email: item.profile.email,
         title: item.title,
         rating: item.rating,
       }));
@@ -182,17 +183,32 @@ function TableComponent({ recommendations, fetchData }: RecommendationsList) {
           {row.rating}
         </Link>
       ),
+      sortFunction: (firstRow: any, secondRow: any) => {
+        const firstValue = firstRow.rating;
+        const secondValue = secondRow.rating;
+
+        const isFirstString = isNaN(Number(firstValue));
+        const isSecondString = isNaN(Number(secondValue));
+
+        if (isFirstString && !isSecondString) {
+          return -1;
+        } else if (!isFirstString && isSecondString) {
+          return 1;
+        }
+
+        return secondValue > firstValue ? -1 : secondValue < firstValue ? 1 : 0;
+      },
     },
     {
       name: "User",
-      selector: (row: any) => row.username,
+      selector: (row: any) => row.email,
       sortable: true,
       cell: (row: any) => (
         <Link
           to={`${row.id !== "Нема податоци" ? row.id : ""}`}
           className="no-underline text-black hover:text-purple w-full h-full py-6"
         >
-          {row.username}
+          {row.email}
         </Link>
       ),
     },
@@ -214,7 +230,7 @@ function TableComponent({ recommendations, fetchData }: RecommendationsList) {
             modalText={modalText}
             modalInputs={modalInputs}
             action={formAction}
-            closeModal={closeModal}
+            cancel={closeModal}
           />
         )}
         <DataTable
