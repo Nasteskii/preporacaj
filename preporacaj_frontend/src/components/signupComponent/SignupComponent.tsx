@@ -68,7 +68,9 @@ function SignupComponent() {
             color="secondary"
             className="text-center !mb-4"
           >
-            Препорачај
+            <Link to="/home" className="text-purple hover:text-purple">
+              Препорачај
+            </Link>
           </Typography>
           <form onSubmit={handleSignup} className="space-y-4">
             <TextField

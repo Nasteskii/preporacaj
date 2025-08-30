@@ -1,36 +1,40 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import TableComponent from "../tableComponent/TableComponent";
 import { Recommendation } from "../../types/Recommendation";
-import apiRequestService from "../../services/apiRequest.service";
+import { fetchRecommendationsByProfileId } from "../../services/recommendations.service";
+import { useAuth } from "../../context/AuthContext";
 
 function MyRecommendationsComponent() {
+  const { profile } = useAuth();
   const [recommendations, setRecommendations] = useState<
     Recommendation[] | null
   >(null);
 
-  const fetchData = async () => {
-    try {
-      const response = await apiRequestService.get(
-        "/api/recommendations/public/profile/1",
-      );
-      setRecommendations(response.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
+  const fetchData = () => {
+    if (!profile) return;
+
+    fetchRecommendationsByProfileId(profile?.id!).then((response) =>
+      setRecommendations(response?.data),
+    );
   };
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [profile]);
 
-  return (
-    <div className="bg-silver w-full pt-12 pb-32 overflow-auto">
-      <div className="text-center text-3xl mb-12 text-purple">
-        Мои препораки
+  if (profile) {
+    return (
+      <div className="bg-silver w-full pt-12 pb-32 overflow-auto">
+        <div className="text-center text-3xl mb-12 text-purple">
+          Мои препораки
+        </div>
+        <TableComponent
+          recommendations={recommendations}
+          fetchData={fetchData}
+        />
       </div>
-      <TableComponent recommendations={recommendations} fetchData={fetchData} />
-    </div>
-  );
+    );
+  }
 }
 
 export default MyRecommendationsComponent;

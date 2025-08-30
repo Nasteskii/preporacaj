@@ -9,6 +9,7 @@ import {
   FiBookOpen,
   FiHeart,
   FiHome,
+  FiLogIn,
   FiLogOut,
 } from "react-icons/fi";
 import { RiCarLine } from "react-icons/ri";
@@ -23,8 +24,10 @@ import Books from "../../paths/books/books";
 import IT from "../../paths/it/it";
 import ModalComponent from "../modalComponent/ModalComponent";
 import AuthService from "../../services/auth.service";
+import { useAuth } from "../../context/AuthContext";
 
 function SideMenuComponent() {
+  const { profile } = useAuth();
   const [menuCollapse, setMenuCollapse] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const location = useLocation();
@@ -66,16 +69,13 @@ function SideMenuComponent() {
         className={menuCollapse ? "w-20" : "w-64"}
         style={menuCollapse ? { minWidth: "80px" } : { minWidth: "248px" }}
       >
-        <Sidebar
-          className="h-screen bg-metal bg-metal sidebar"
-          collapsed={menuCollapse}
-        >
+        <Sidebar className="h-screen bg-metal sidebar" collapsed={menuCollapse}>
           <Menu>
             <MenuItem
               active={true}
               icon={menuCollapse ? <FiHome /> : null}
               component={<Link to="/home" />}
-              className="menu-item mt-5"
+              className="menu-item mt-5 mb-24"
             >
               <h2 className="text-3xl text-center text-purple p-3">
                 Препорачај
@@ -87,17 +87,19 @@ function SideMenuComponent() {
             >
               {menuCollapse ? <FiArrowRightCircle /> : <FiArrowLeftCircle />}
             </div>
-            <MenuItem
-              icon={<FiHeart />}
-              component={<Link to="/my-recommendations" />}
-              className={`mt-24 w-fit ${
-                location.pathname === "/my-recommendations"
-                  ? "border-2 rounded-2xl border-purple"
-                  : ""
-              }`}
-            >
-              Мои препораки
-            </MenuItem>
+            {profile && (
+              <MenuItem
+                icon={<FiHeart />}
+                component={<Link to="/my-recommendations" />}
+                className={
+                  location.pathname === "/my-recommendations"
+                    ? "border-2 rounded-2xl border-purple"
+                    : ""
+                }
+              >
+                Мои препораки
+              </MenuItem>
+            )}
             <MenuItem
               icon={<RiCarLine />}
               component={<Link to="/vehicles" />}
@@ -142,11 +144,19 @@ function SideMenuComponent() {
             >
               ИТ и компјутери
             </MenuItem>
-            <div className="mt-56">
-              <MenuItem icon={<FiLogOut />} onClick={() => setShowModal(true)}>
+            {profile ? (
+              <MenuItem
+                icon={<FiLogOut />}
+                onClick={() => setShowModal(true)}
+                className="mt-56"
+              >
                 Одјави се
               </MenuItem>
-            </div>
+            ) : (
+              <MenuItem icon={<FiLogIn />} onClick={logOut} className="mt-56">
+                Најави се
+              </MenuItem>
+            )}
           </Menu>
         </Sidebar>
         {showModal && (
