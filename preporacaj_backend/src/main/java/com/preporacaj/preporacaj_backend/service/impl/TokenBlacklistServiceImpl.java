@@ -1,25 +1,47 @@
 package com.preporacaj.preporacaj_backend.service.impl;
 
+import com.preporacaj.preporacaj_backend.model.BlacklistedToken;
+import com.preporacaj.preporacaj_backend.repository.BlacklistedTokenRepository;
 import com.preporacaj.preporacaj_backend.service.TokenBlacklistService;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import jakarta.transaction.Transactional;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.TimeUnit;
+import java.time.Instant;
+import java.util.stream.Collectors;
 
 @Service
 public class TokenBlacklistServiceImpl implements TokenBlacklistService {
-    private StringRedisTemplate redisTemplate;
+    private final BlacklistedTokenRepository blacklistedTokenRepository;
 
-    public void TokenBlacklistService(StringRedisTemplate redisTemplate) {
-        this.redisTemplate = redisTemplate;
+    public TokenBlacklistServiceImpl(BlacklistedTokenRepository blacklistedTokenRepository) {
+        this.blacklistedTokenRepository = blacklistedTokenRepository;
     }
 
+    @Transactional
+    @Override
     public void blacklistToken(String token, long expirationTimeInMillis) {
-        long expirationSeconds = expirationTimeInMillis / 1000;
-        redisTemplate.opsForValue().set(token, "blacklisted", expirationSeconds, TimeUnit.SECONDS);
+        Instant expirationDate = Instant.now().plusMillis(expirationTimeInMillis);
+        BlacklistedToken blacklistedToken = new BlacklistedToken();
+        blacklistedToken.setToken(token);
+        blacklistedToken.setExpirationDate(expirationDate);
+        blacklistedTokenRepository.save(blacklistedToken);
     }
 
+    @Override
     public boolean isTokenBlacklisted(String token) {
-        return redisTemplate.hasKey(token);
+        return blacklistedTokenRepository.existsByToken(token);
     }
+
+    @Scheduled(fixedRate = 86400000)
+    @Transactional
+    public void cleanExpiredTokens() {
+        blacklistedTokenRepository.deleteAll(
+                blacklistedTokenRepository.findAll()
+                        .stream()
+                        .filter(token -> token.getExpirationDate().isBefore(Instant.now()))
+                        .collect(Collectors.toList())
+        );
+    }
+
 }

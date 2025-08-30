@@ -11,6 +11,8 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -24,6 +26,11 @@ import static jakarta.servlet.DispatcherType.FORWARD;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+    private final RequestMatcher[] publicEndpoints = {
+            new AntPathRequestMatcher("/auth/**"),
+            new AntPathRequestMatcher("/api/recommendations/public/**"),
+            new AntPathRequestMatcher("/api/comments/public/**")
+    };
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     public SecurityConfig(
@@ -38,9 +45,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .dispatcherTypeMatchers(FORWARD, ERROR).permitAll()
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/api/recommendations/public/**", "/api/comments/public/**").permitAll()
-                        .requestMatchers("/api/**").authenticated()
+                        .requestMatchers(publicEndpoints).permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -53,14 +58,10 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(
-                "http://localhost:3000",
-                "http://localhost:3001",
-                "http://localhost:5173",
-                "http://localhost:5174"
-        ));
+        configuration.addAllowedOriginPattern("http://localhost:5173");
         configuration.setAllowedMethods(List.of("GET", "POST", "DELETE"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

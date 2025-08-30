@@ -50,8 +50,8 @@ public class RecommendationServiceImpl implements RecommendationService {
         newRecommendation.setRecommendationContent(recommendationDto.getContent());
         newRecommendation.setRecommendationCategory(recommendationDto.getCategory());
         newRecommendation.setStatus(Status.ACTIVE);
-        newRecommendation.setRating("Not rated");
-        newRecommendation.setRatings(0);
+        newRecommendation.setRating(0.0);
+        newRecommendation.setRatingsCount(0);
         newRecommendation.setProfile(profile);
         return recommendationRepository.save(newRecommendation);
     }
@@ -83,9 +83,9 @@ public class RecommendationServiceImpl implements RecommendationService {
     @Override
     public void updateRating(String recommendationId, double newRating) {
         Recommendation recommendation = recommendationRepository.findById(recommendationId).orElseThrow(NoSuchElementException::new);
-        double oldRating = recommendation.getRatings() > 0 ? Double.parseDouble(recommendation.getRating()) : 0;
-        recommendation.setRating(String.format("%.2f",(oldRating * recommendation.getRatings() + newRating) / (recommendation.getRatings() + 1)));
-        recommendation.setRatings(recommendation.getRatings() + 1);
+        double oldRating = recommendation.getRating();
+        recommendation.setRating((oldRating * recommendation.getRatingsCount() + newRating) / (recommendation.getRatingsCount() + 1));
+        recommendation.setRatingsCount(recommendation.getRatingsCount() + 1);
         recommendationRepository.save(recommendation);
     }
 }

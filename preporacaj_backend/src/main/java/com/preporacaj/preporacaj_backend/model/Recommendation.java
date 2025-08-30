@@ -13,12 +13,12 @@ public class Recommendation {
     private String id;
     private String title;
     private String recommendationContent;
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private RecommendationCategory recommendationCategory;
     @Enumerated
     private Status status;
-    private String rating;
-    private Integer ratings;
+    private Double rating;
+    private Integer ratingsCount;
     @ManyToOne
     private Profile profile;
 }
