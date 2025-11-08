@@ -1,22 +1,36 @@
 .sidebar {
-  position: fixed !important;
+    position: fixed !important;
+}
+
+.sidebar .ps-sidebar-container .ps-menu-root {
+    height: 100vh;
+}
+
+.sidebar .ps-sidebar-container .css-ewdv3l {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 20px 0 20px 0;
 }
 
 .sidebar .ps-sidebar-container a:hover {
-  border-radius: 16px;
-  background-color: #d3dce6;
+    border-radius: 16px;
+    background-color: #c698ff;
 }
+
 .sidebar svg {
-  margin: auto;
-  color: #800080;
-  width: 40px;
-  height: 40px;
+    margin: auto;
+    color: #800080;
+    width: 40px;
+    height: 40px;
 }
+
 html {
-  overflow-x: hidden;
+    overflow-x: hidden;
 }
+
 @media only screen and (max-width: 720px) {
-  html {
-    overflow: hidden;
-  }
+    html {
+        overflow: hidden;
+    }
 }

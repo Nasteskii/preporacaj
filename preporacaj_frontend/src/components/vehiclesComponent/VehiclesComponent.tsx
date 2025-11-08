@@ -19,8 +19,8 @@ function VehiclesComponent() {
   }, []);
 
   return (
-    <div className="bg-silver w-full pt-12 pb-32 overflow-auto">
-      <div className="text-center text-3xl mb-12 text-purple">Возила</div>
+    <div className="bg-silver w-full py-12 overflow-auto">
+      <h1 className="text-center text-3xl mb-12 text-purple">Возила</h1>
       <TableComponent recommendations={recommendations} fetchData={fetchData} />
     </div>
   );

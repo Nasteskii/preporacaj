@@ -9,8 +9,11 @@ import {
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import authService from "../../services/auth.service";
+import { useAuth } from "../../context/AuthContext";
+import { fetchProfileInfo } from "../../services/profile.service";
 
 function LoginComponent() {
+  const { setProfile } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -34,7 +37,8 @@ function LoginComponent() {
 
     try {
       await authService.login(loginProfileDTO);
-
+      const userProfile = await fetchProfileInfo();
+      setProfile(userProfile);
       setError("");
       setSuccess("Успешно се најавивте!");
       setTimeout(function () {
@@ -62,6 +66,7 @@ function LoginComponent() {
           <form onSubmit={handleLogin} className="space-y-4">
             <TextField
               label="Емаил"
+              placeholder="Емаил"
               type="email"
               name="email"
               value={formData.email}
@@ -69,9 +74,13 @@ function LoginComponent() {
               required
               fullWidth
               color="secondary"
+              InputLabelProps={{
+                shrink: true,
+              }}
             />
             <TextField
               label="Лозинка"
+              placeholder="Лозинка"
               type="password"
               name="password"
               value={formData.password}
@@ -79,6 +88,9 @@ function LoginComponent() {
               required
               fullWidth
               color="secondary"
+              InputLabelProps={{
+                shrink: true,
+              }}
             />
             <Button
               type="submit"

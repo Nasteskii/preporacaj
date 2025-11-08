@@ -24,7 +24,7 @@ function MyRecommendationsComponent() {
 
   if (profile) {
     return (
-      <div className="bg-silver w-full pt-12 pb-32 overflow-auto">
+      <div className="bg-silver w-full py-12 overflow-auto">
         <div className="text-center text-3xl mb-12 text-purple">
           Мои препораки
         </div>

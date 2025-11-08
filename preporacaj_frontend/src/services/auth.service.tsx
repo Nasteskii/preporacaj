@@ -36,7 +36,7 @@ class AuthService {
       localStorage.removeItem("jwtToken");
       sessionStorage.removeItem("jwtToken");
 
-      window.location.href = "/login";
+      window.location.href = "/home";
     } catch (error) {
       console.error("Logout failed:", error);
     }

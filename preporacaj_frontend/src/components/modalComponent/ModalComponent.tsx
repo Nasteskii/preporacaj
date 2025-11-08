@@ -2,6 +2,7 @@ import { Input } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import {
   addRecommendation,
+  changeStatus,
   deleteRecommendation,
   editRecommendation,
 } from "../../services/recommendations.service";
@@ -14,6 +15,7 @@ const ModalComponent = ({
   cancel,
   confirm,
   action,
+  recommendationId,
   commentId,
 }: {
   modalText: string;
@@ -21,6 +23,7 @@ const ModalComponent = ({
   cancel: any;
   confirm?: any;
   action?: string;
+  recommendationId?: string;
   commentId?: string;
 }) => {
   const location = useLocation();
@@ -43,13 +46,14 @@ const ModalComponent = ({
     if (action === "addRecommendation") {
       await addRecommendation(recommendationDTO);
     } else if (action === "editRecommendation") {
-      await editRecommendation(
-        path.substring(path.lastIndexOf("/") + 1),
-        recommendationDTO,
-      );
+      await editRecommendation(recommendationId!, recommendationDTO);
     } else if (action === "deleteRecommendation") {
-      await deleteRecommendation(path.substring(path.lastIndexOf("/") + 1));
+      await deleteRecommendation(recommendationId!);
       window.location.href = path.substring(0, path.lastIndexOf("/"));
+    } else if (action === "activateRecommendation") {
+      await changeStatus(recommendationId!, "ACTIVE");
+    } else if (action === "deactivateRecommendation") {
+      await changeStatus(recommendationId!, "INACTIVE");
     } else if (action === "editComment") {
       await editComment(
         path.substring(path.lastIndexOf("/") + 1),
@@ -84,7 +88,7 @@ const ModalComponent = ({
       <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-fit h-fit z-10 rounded-lg bg-gray-dark flex justify-center items-center backdrop-blur">
         <div className="bg-transparent px-10 py-5 rounded-lg w-fit">
           <div className="modal-content text-center text-white">
-            <p className="text-xl">{modalText}</p>
+            <h1 className="text-xl mb-4">{modalText}</h1>
           </div>
           <div>
             {modalInputs ? (
@@ -98,9 +102,16 @@ const ModalComponent = ({
                       placeholder="Име"
                       defaultValue={modalInputs[0]}
                       autoFocus
-                      fullWidth={true}
+                      required
+                      fullWidth
                       color="secondary"
                       style={{ color: "white" }}
+                      sx={{
+                        "&:before": { borderBottom: "1px solid #fff" },
+                        "&:hover:not(.Mui-disabled):before": {
+                          borderBottom: "1px solid #fff",
+                        },
+                      }}
                     />
                   </>
                 )}
@@ -112,10 +123,17 @@ const ModalComponent = ({
                     action !== "addRecommendation" &&
                     action !== "editRecommendation"
                   }
-                  fullWidth={true}
+                  required
+                  fullWidth
                   color="secondary"
                   multiline
                   style={{ color: "white" }}
+                  sx={{
+                    "&:before": { borderBottom: "1px solid #fff" },
+                    "&:hover:not(.Mui-disabled):before": {
+                      borderBottom: "1px solid #fff",
+                    },
+                  }}
                 />
                 <div className="mt-5 justify-center flex flex-row-reverse gap-4">
                   {action === "editRecommendation" ||
