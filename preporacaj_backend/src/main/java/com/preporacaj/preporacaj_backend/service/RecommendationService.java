@@ -16,5 +16,7 @@ public interface RecommendationService {
     Recommendation editRecommendation(String recommendationId, RecommendationDto recommendationDto);
     Recommendation removeRecommendation(String recommendationId);
     void changeStatus(String recommendationId, Status status);
-    void updateRating(String recommendationId, double newRating);
+    void updateAvailabilityRating(String recommendationId, double newRating);
+    void updateReliabilityRating(String recommendationId, double newRating);
+    void updatePriceRating(String recommendationId, double newRating);
 }

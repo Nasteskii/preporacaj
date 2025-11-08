@@ -46,10 +46,14 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private Comment saveComment(String recommendationId, CommentDto commentDto, Comment comment) {
-        Profile profile = profileRepository.findById(commentDto.getProfileId()).orElseThrow(NoSuchElementException::new);
-        Recommendation recommendation = recommendationRepository.findById(recommendationId).orElseThrow(NoSuchElementException::new);
+        if (comment.getProfile() == null) {
+            Profile profile = profileRepository
+                    .findById(commentDto.getProfileId())
+                    .orElseThrow(NoSuchElementException::new);
+            comment.setProfile(profile);
+        }
 
-        comment.setProfile(profile);
+        Recommendation recommendation = recommendationRepository.findById(recommendationId).orElseThrow(NoSuchElementException::new);
         comment.setRecommendation(recommendation);
         comment.setCommentContent(commentDto.getContent());
         return commentRepository.save(comment);
