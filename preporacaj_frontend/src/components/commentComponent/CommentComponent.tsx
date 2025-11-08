@@ -13,7 +13,8 @@ function CommentComponent({
   return (
     <div className="my-3">
       <h2 className="text-purple">
-        {recommendationComment?.profile?.username}
+        {recommendationComment?.profile?.name}{" "}
+        {recommendationComment?.profile?.surname}
       </h2>
       <TextField
         id="commentInput"

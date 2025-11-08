@@ -5,7 +5,12 @@ import { Profile } from "../types/Profile";
 const AuthContext = createContext<{
   profile: Profile | null;
   isAuthenticated: boolean;
-}>({ profile: null, isAuthenticated: false });
+  setProfile: (profile: Profile | null) => void;
+}>({
+  profile: null,
+  isAuthenticated: false,
+  setProfile: () => {},
+});
 
 export const AuthProvider = ({ children }: any) => {
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -17,7 +22,9 @@ export const AuthProvider = ({ children }: any) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ profile, isAuthenticated: !!profile }}>
+    <AuthContext.Provider
+      value={{ profile, isAuthenticated: !!profile, setProfile }}
+    >
       {children}
     </AuthContext.Provider>
   );

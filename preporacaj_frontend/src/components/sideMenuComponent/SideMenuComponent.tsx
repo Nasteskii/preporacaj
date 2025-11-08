@@ -28,19 +28,24 @@ import { useAuth } from "../../context/AuthContext";
 
 function SideMenuComponent() {
   const { profile } = useAuth();
+  const [toggleMenu, setToggleMenu] = useState(true);
   const [menuCollapse, setMenuCollapse] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const location = useLocation();
+  const path = location.pathname;
 
   const handleWindowResize = () => {
     if (window.innerWidth <= 720) {
+      setToggleMenu(false);
       setMenuCollapse(true);
+    } else {
+      setToggleMenu(true);
     }
   };
 
   useEffect(() => {
-    if (window.location.pathname === "/") {
-      window.location.pathname = "/home";
+    if (path === "/") {
+      window.location.href = "/home";
     }
     handleWindowResize();
 
@@ -65,34 +70,38 @@ function SideMenuComponent() {
 
   return (
     <div className="flex no-wrap h-screen">
-      <div
-        className={menuCollapse ? "w-20" : "w-64"}
-        style={menuCollapse ? { minWidth: "80px" } : { minWidth: "248px" }}
-      >
-        <Sidebar className="h-screen bg-metal sidebar" collapsed={menuCollapse}>
+      <div style={menuCollapse ? { minWidth: "80px" } : { minWidth: "248px" }}>
+        <Sidebar
+          className="h-screen bg-violet sidebar"
+          collapsed={menuCollapse}
+        >
           <Menu>
             <MenuItem
               active={true}
               icon={menuCollapse ? <FiHome /> : null}
               component={<Link to="/home" />}
-              className="menu-item mt-5 mb-24"
+              className="menu-item mb-24"
             >
               <h2 className="text-3xl text-center text-purple p-3">
                 Препорачај
               </h2>
             </MenuItem>
-            <div
-              className="text-black absolute right-3.5 z-10 font-bold text-xl top-20 cursor-pointer w-14 min-w-14"
-              onClick={menuIconClick}
-            >
-              {menuCollapse ? <FiArrowRightCircle /> : <FiArrowLeftCircle />}
-            </div>
+            {toggleMenu && (
+              <div
+                className="text-black absolute right-3.5 z-10 font-bold text-xl top-20 cursor-pointer w-14 min-w-14"
+                onClick={menuIconClick}
+              >
+                {menuCollapse ? <FiArrowRightCircle /> : <FiArrowLeftCircle />}
+              </div>
+            )}
             {profile && (
               <MenuItem
                 icon={<FiHeart />}
                 component={<Link to="/my-recommendations" />}
                 className={
-                  location.pathname === "/my-recommendations"
+                  path === "/my-recommendations" ||
+                  path.substring(0, path.lastIndexOf("/")) ===
+                    "/my-recommendations"
                     ? "border-2 rounded-2xl border-purple"
                     : ""
                 }
@@ -104,7 +113,8 @@ function SideMenuComponent() {
               icon={<RiCarLine />}
               component={<Link to="/vehicles" />}
               className={
-                location.pathname === "/vehicles"
+                path === "/vehicles" ||
+                path.substring(0, path.lastIndexOf("/")) === "/vehicles"
                   ? "border-2 rounded-2xl border-purple"
                   : ""
               }
@@ -115,7 +125,8 @@ function SideMenuComponent() {
               icon={<MdMicrowave />}
               component={<Link to="/home-appliances" />}
               className={
-                location.pathname === "/home-appliances"
+                path === "/home-appliances" ||
+                path.substring(0, path.lastIndexOf("/")) === "/home-appliances"
                   ? "border-2 rounded-2xl border-purple"
                   : ""
               }
@@ -126,7 +137,8 @@ function SideMenuComponent() {
               icon={<FiBookOpen />}
               component={<Link to="/books" />}
               className={
-                location.pathname === "/books"
+                path === "/books" ||
+                path.substring(0, path.lastIndexOf("/")) === "/books"
                   ? "border-2 rounded-2xl border-purple"
                   : ""
               }
@@ -137,26 +149,40 @@ function SideMenuComponent() {
               icon={<MdOutlineDesktopWindows />}
               component={<Link to="/IT" />}
               className={
-                location.pathname === "/IT"
+                path === "/IT" ||
+                path.substring(0, path.lastIndexOf("/")) === "/IT"
                   ? "border-2 rounded-2xl border-purple"
                   : ""
               }
             >
               ИТ и компјутери
             </MenuItem>
-            {profile ? (
-              <MenuItem
-                icon={<FiLogOut />}
-                onClick={() => setShowModal(true)}
-                className="mt-56"
-              >
-                Одјави се
-              </MenuItem>
-            ) : (
-              <MenuItem icon={<FiLogIn />} onClick={logOut} className="mt-56">
-                Најави се
-              </MenuItem>
-            )}
+            <div className="mt-auto">
+              {profile && (
+                <div>
+                  <p className="text-center text-lg mb-2">
+                    {profile?.name} {profile?.surname}
+                  </p>
+                  {profile?.role === "ROLE_SUPERUSER" && (
+                    <p className="text-center text-purple text-sm">
+                      АДМИНИСТРАТОР
+                    </p>
+                  )}
+                </div>
+              )}
+              {profile ? (
+                <MenuItem
+                  icon={<FiLogOut />}
+                  onClick={() => setShowModal(true)}
+                >
+                  Одјави се
+                </MenuItem>
+              ) : (
+                <MenuItem icon={<FiLogIn />} component={<Link to="/login" />}>
+                  Најави се
+                </MenuItem>
+              )}
+            </div>
           </Menu>
         </Sidebar>
         {showModal && (

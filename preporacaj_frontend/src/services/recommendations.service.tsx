@@ -80,15 +80,46 @@ export const deleteRecommendation = async (recommendationId: string) => {
   }
 };
 
-export const changeRating = async (
+export const changeStatus = async (
   recommendationId: string,
-  newRating: Int8Array,
+  status: string,
 ) => {
   try {
     await apiRequestService.get(
-      `/api/recommendations/public/rating/${recommendationId}/${newRating}`,
+      `/api/recommendations/status/${recommendationId}/${status}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+        },
+      },
     );
   } catch (error) {
-    console.error("Error changing rating:", error);
+    console.error("Error changing recommendation status:", error);
+  }
+};
+
+export const changeRating = async (
+  recommendationId: string,
+  newRating: Int8Array,
+  ratingType: string,
+) => {
+  let ratingPath;
+  switch (ratingType) {
+    case "availability":
+      ratingPath = "availabilityRating";
+      break;
+    case "reliability":
+      ratingPath = "reliabilityRating";
+      break;
+    case "price":
+      ratingPath = "priceRating";
+      break;
+  }
+  try {
+    await apiRequestService.get(
+      `/api/recommendations/public/${ratingPath}/${recommendationId}/${newRating}`,
+    );
+  } catch (error) {
+    console.error("Error changing availability rating:", error);
   }
 };
