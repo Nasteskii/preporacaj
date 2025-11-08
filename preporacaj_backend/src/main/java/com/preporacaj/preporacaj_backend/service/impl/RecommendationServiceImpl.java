@@ -49,9 +49,6 @@ public class RecommendationServiceImpl implements RecommendationService {
         newRecommendation.setTitle(recommendationDto.getTitle());
         newRecommendation.setRecommendationContent(recommendationDto.getContent());
         newRecommendation.setRecommendationCategory(recommendationDto.getCategory());
-        newRecommendation.setStatus(Status.ACTIVE);
-        newRecommendation.setRating(0.0);
-        newRecommendation.setRatingsCount(0);
         newRecommendation.setProfile(profile);
         return recommendationRepository.save(newRecommendation);
     }
@@ -59,11 +56,9 @@ public class RecommendationServiceImpl implements RecommendationService {
     @Override
     public Recommendation editRecommendation(String recommendationId, RecommendationDto recommendationDto) {
         Recommendation oldRecommendation = recommendationRepository.findById(recommendationId).orElseThrow(NoSuchElementException::new);
-        Profile profile = profileRepository.findById(recommendationDto.getProfileId()).orElseThrow(NoSuchElementException::new);
         oldRecommendation.setTitle(recommendationDto.getTitle());
         oldRecommendation.setRecommendationContent(recommendationDto.getContent());
         oldRecommendation.setRecommendationCategory(recommendationDto.getCategory());
-        oldRecommendation.setProfile(profile);
         return recommendationRepository.save(oldRecommendation);
     }
 
@@ -78,14 +73,42 @@ public class RecommendationServiceImpl implements RecommendationService {
     public void changeStatus(String recommendationId, Status status) {
         Recommendation recommendation = recommendationRepository.findById(recommendationId).orElseThrow(NoSuchElementException::new);
         recommendation.setStatus(status);
+        recommendationRepository.save(recommendation);
     }
 
     @Override
-    public void updateRating(String recommendationId, double newRating) {
+    public void updateAvailabilityRating(String recommendationId, double newRating) {
         Recommendation recommendation = recommendationRepository.findById(recommendationId).orElseThrow(NoSuchElementException::new);
-        double oldRating = recommendation.getRating();
-        recommendation.setRating((oldRating * recommendation.getRatingsCount() + newRating) / (recommendation.getRatingsCount() + 1));
-        recommendation.setRatingsCount(recommendation.getRatingsCount() + 1);
+        double oldRating = recommendation.getAvailabilityRating();
+        recommendation.setAvailabilityRating((oldRating * recommendation.getAvailabilityRatingCount() + newRating) / (recommendation.getAvailabilityRatingCount() + 1));
+        recommendation.setAvailabilityRatingCount(recommendation.getAvailabilityRatingCount() + 1);
+        recommendationRepository.save(recommendation);
+        updateOverallRating(recommendationId);
+    }
+
+    @Override
+    public void updateReliabilityRating(String recommendationId, double newRating) {
+        Recommendation recommendation = recommendationRepository.findById(recommendationId).orElseThrow(NoSuchElementException::new);
+        double oldRating = recommendation.getReliabilityRating();
+        recommendation.setReliabilityRating((oldRating * recommendation.getReliabilityRatingCount() + newRating) / (recommendation.getReliabilityRatingCount() + 1));
+        recommendation.setReliabilityRatingCount(recommendation.getReliabilityRatingCount() + 1);
+        recommendationRepository.save(recommendation);
+        updateOverallRating(recommendationId);
+    }
+
+    @Override
+    public void updatePriceRating(String recommendationId, double newRating) {
+        Recommendation recommendation = recommendationRepository.findById(recommendationId).orElseThrow(NoSuchElementException::new);
+        double oldRating = recommendation.getPriceRating();
+        recommendation.setPriceRating((oldRating * recommendation.getPriceRatingCount() + newRating) / (recommendation.getPriceRatingCount() + 1));
+        recommendation.setPriceRatingCount(recommendation.getPriceRatingCount() + 1);
+        recommendationRepository.save(recommendation);
+        updateOverallRating(recommendationId);
+    }
+
+    private void updateOverallRating(String recommendationId) {
+        Recommendation recommendation = recommendationRepository.findById(recommendationId).orElseThrow(NoSuchElementException::new);
+        recommendation.setOverallRating((recommendation.getAvailabilityRating() + recommendation.getReliabilityRating() + recommendation.getPriceRating()) / 3);
         recommendationRepository.save(recommendation);
     }
 }

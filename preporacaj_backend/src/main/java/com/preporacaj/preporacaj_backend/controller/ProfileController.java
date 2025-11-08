@@ -28,9 +28,12 @@ public class ProfileController {
         try {
             List<Profile> profiles = profileService.allProfiles();
             List<ProfileResponse> profileResponses =
-                    profiles.stream().map(profile -> new ProfileResponse(
+                    profiles
+                            .stream()
+                            .map(profile -> new ProfileResponse(
                                     profile.getId(), profile.getEmail(),
-                                    profile.getName(), profile.getSurname())
+                                    profile.getName(), profile.getSurname(),
+                                    profile.getRole())
                             )
                             .toList();
 
@@ -48,7 +51,8 @@ public class ProfileController {
 
             ProfileResponse profileResponse = new ProfileResponse(
                     currentProfile.getId(), currentProfile.getEmail(),
-                    currentProfile.getName(), currentProfile.getSurname()
+                    currentProfile.getName(), currentProfile.getSurname(),
+                    currentProfile.getRole()
             );
 
             return new ResponseEntity<>(profileResponse, HttpStatus.OK);
