@@ -97,10 +97,30 @@ public class RecommendationsController {
         }
     }
 
-    @GetMapping("/public/rating/{recommendationId}/{rating}")
-    public ResponseEntity<String> updateRating(@PathVariable String recommendationId, @PathVariable double rating) {
+    @GetMapping("/public/availabilityRating/{recommendationId}/{rating}")
+    public ResponseEntity<String> updateAvailabilityRating(@PathVariable String recommendationId, @PathVariable double rating) {
         try {
-            recommendationService.updateRating(recommendationId, rating);
+            recommendationService.updateAvailabilityRating(recommendationId, rating);
+            return new ResponseEntity<>("Success", HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>("Failed", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/public/reliabilityRating/{recommendationId}/{rating}")
+    public ResponseEntity<String> updateReliabilityRating(@PathVariable String recommendationId, @PathVariable double rating) {
+        try {
+            recommendationService.updateReliabilityRating(recommendationId, rating);
+            return new ResponseEntity<>("Success", HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>("Failed", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/public/priceRating/{recommendationId}/{rating}")
+    public ResponseEntity<String> updatePriceRating(@PathVariable String recommendationId, @PathVariable double rating) {
+        try {
+            recommendationService.updatePriceRating(recommendationId, rating);
             return new ResponseEntity<>("Success", HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>("Failed", HttpStatus.NOT_FOUND);
